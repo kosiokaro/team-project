@@ -29,7 +29,7 @@ public class TMDbAccountDataBaseImpl implements TMDbAccountDataBase {
         this.client = new OkHttpClient();
     }
 
-    //    Watchlist modification helper method
+    //    Watchlist modification helper methods
     private boolean sendWatchlistRequest(Media media, boolean add){
         String mediaType = "movie";
 
