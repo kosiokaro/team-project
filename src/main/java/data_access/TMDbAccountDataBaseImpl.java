@@ -20,7 +20,7 @@ import okhttp3.MediaType;
 
 
 public class TMDbAccountDataBaseImpl implements TMDbAccountDataBase {
-    private static final String BEARER_Token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM ";
+    private static final String BEARER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM ";
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
     private static final String ACCOUNT_ID = "account_id";
     private final OkHttpClient client;
