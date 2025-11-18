@@ -15,7 +15,7 @@ public interface TMDbAccountDataBase {
     boolean removeFromWatchList(Media media, Watchlist watchlist, User user) throws JSONException;
 
     //  Gets all media in watchlist
-    Media[] getWatchlistMovies() throws JSONException;
+    Media[] getWatchlistMedia() throws JSONException;
 
     //  Gets all media in favorites
 
