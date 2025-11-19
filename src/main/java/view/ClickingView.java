@@ -156,6 +156,7 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     }
 }
 
+
 //    public ClickingViewModel getViewModel() {
 //        return viewModel;
 //    }
