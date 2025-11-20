@@ -28,8 +28,10 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     private JLabel ratingLabel = new JLabel();
     private JLabel genresLabel = new JLabel();
     private JButton rateButton = new JButton("Rate and Comment");
+    private JButton backButton = new JButton("← Back");
 
     private final String viewName = "clicking";
+    private String previousViewName = "HOMEPAGE";
 
     public ClickingView(ClickingViewModel viewModel, CommentViewModel comment, ViewManagerModel viewManager) {
         this.viewModel = viewModel;
@@ -44,6 +46,13 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        backButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        backButton.setFocusPainted(false);
+        backButton.addActionListener(e -> goBack());
+        backPanel.add(backButton);
+        topPanel.add(backPanel, BorderLayout.WEST);
+
         topPanel.add(errorLabel, BorderLayout.NORTH);
 
         titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
@@ -80,6 +89,7 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
         add(bottomPanel, BorderLayout.SOUTH);
 
+
         rateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,11 +103,17 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         });
     }
 
+    public void goBack() {
+        viewManagerModel.setState(previousViewName);
+        viewManagerModel.firePropertyChange();
+    }
+    public void setPreviousViewName(String viewName) {
+        this.previousViewName = viewName;
+    }
 
     public void updateView() {
         ClickingState state = viewModel.getState();
         String errorMessage = state.getErrorMessage();
-
 
         errorLabel.setText(state.getErrorMessage());
 
@@ -143,6 +159,7 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         }
     }
 
+
     public void propertyChange(PropertyChangeEvent evt) {
         updateView();
     }
@@ -154,7 +171,9 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     public void setClickingController(interface_adapter.clicking.ClickingController controller) {
         this.controller = controller;
     }
+
 }
+
 
 //    public ClickingViewModel getViewModel() {
 //        return viewModel;

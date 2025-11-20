@@ -11,6 +11,7 @@ public class ClickingPresenter implements ClickingOutputBoundary {
     private final ViewManagerModel viewManagerModel;
 
 
+
     public ClickingPresenter(ClickingViewModel vm, ViewManagerModel vmm) {
         this.clickingViewModel = vm;
         this.viewManagerModel = vmm;
@@ -27,8 +28,6 @@ public class ClickingPresenter implements ClickingOutputBoundary {
         state.setGenres(outputData.getGenres());
         state.setOverview(outputData.getOverview());
         state.setPosterUrl(outputData.getPosterUrl());
-
-
 
         viewManagerModel.setState(clickingViewModel.getViewName());
         viewManagerModel.firePropertyChange();
