@@ -29,7 +29,7 @@ public class TMDbAccountDataBaseImpl implements TMDbAccountDataBase {
         return token;
     }
 
-    private TMDbAccountDataBaseImpl() {
+    public TMDbAccountDataBaseImpl() {
         this.client = new OkHttpClient();
         this.bearerToken = getAPIToken();
     }
