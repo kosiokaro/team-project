@@ -27,6 +27,7 @@ public class CommentPresenter implements CommentOutputBoundary {
         // On success, update the RandCViewModel's state
         final RandCSuccessState randCSuccessState = randCSuccessViewModel.getState();
         randCSuccessState.setMedianame(outputData.getMedianame());
+        //System.out.println(randCSuccessViewModel.getState().getMedianame());
         this.randCSuccessViewModel.firePropertyChange();
 
         // and clear everything from the CommentViewModel's state

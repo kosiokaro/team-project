@@ -1,7 +1,6 @@
 package data_access;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import entity.Comment;
 import entity.Media;
 import entity.User;
@@ -12,165 +11,180 @@ import use_case.signup.SignupUserDataAccessInterface;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FileUserDataAccessObject implements CommentUserDataAccessInterface, SignupUserDataAccessInterface,
-        LoginUserDataAccessInterface {
+/**
+ * 优化版用户数据访问对象
+ * 使用分级文件管理：每个用户一个独立的 JSON 文件
+ * 使用索引文件加速用户名和 accountID 查找
+ */
+public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
+        SignupUserDataAccessInterface, LoginUserDataAccessInterface {
 
-    private final String filePath = "src/main/java/userdata/users.json";
+    private final String userDataDir = "src/main/java/userdata/users/";
+    private final String indexFilePath = "src/main/java/userdata/index.json";
     private final Gson gson = new Gson();
-    private final Type mapType = new TypeToken<Map<String, User>>(){}.getType();
-    private String currentUser;
+    private String currentUser = "Eil";
 
+    // 索引结构：存储用户名和 accountID 的映射关系
+    private static class UserIndex {
+        Map<String, Integer> usernameToAccountID = new HashMap<>();
+        Map<Integer, String> accountIDToUsername = new HashMap<>();
+    }
 
-    // Do not want to look at all users. only one
-    private Map<String, User> readFile() {
-        try {
-            File file = new File(filePath);
-
-            // 调试信息
-            System.out.println("=== File Debug Info ===");
-            System.out.println("File exists: " + file.exists());
-            System.out.println("File path: " + file.getAbsolutePath());
-            System.out.println("Can read: " + file.canRead());
-
-            if (!file.exists()) {
-                System.out.println("File not found, returning empty map");
-                return new HashMap<>();
-            }
-
-            FileReader reader = new FileReader(file);
-            Map<String, User> map = gson.fromJson(reader, mapType);
-            reader.close();
-
-            // 调试信息
-            if (map == null) {
-                System.out.println("Gson returned null, returning empty map");
-                return new HashMap<>();
-            }
-
-            System.out.println("Successfully loaded " + map.size() + " users");
-            System.out.println("User keys: " + map.keySet());
-
-            return map;
-        } catch (Exception e) {
-            System.err.println("Error reading file:");
-            e.printStackTrace();
-            return new HashMap<>();
+    public FileUserDataAccessObject() {
+        // 确保目录存在
+        File dir = new File(userDataDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            System.out.println("Created user data directory: " + dir.getAbsolutePath());
         }
     }
 
-    private void writeFile(Map<String, User> map) {
-        try {
-            FileWriter writer = new FileWriter(filePath);
-            gson.toJson(map, writer);
-            writer.close();
-            System.out.println("Successfully wrote " + map.size() + " users to file");
+    // ==================== 索引管理 ====================
+
+    private UserIndex readIndex() {
+        File indexFile = new File(indexFilePath);
+        if (!indexFile.exists()) {
+            return new UserIndex();
+        }
+
+        try (FileReader reader = new FileReader(indexFile)) {
+            UserIndex index = gson.fromJson(reader, UserIndex.class);
+            return index != null ? index : new UserIndex();
         } catch (Exception e) {
-            System.err.println("Error writing file:");
+            System.err.println("Error reading index file: " + e.getMessage());
+            return new UserIndex();
+        }
+    }
+
+    private void writeIndex(UserIndex index) {
+        try (FileWriter writer = new FileWriter(indexFilePath)) {
+            gson.toJson(index, writer);
+        } catch (IOException e) {
+            System.err.println("Error writing index file: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+    // ==================== 单用户文件操作 ====================
+
+    private String getUserFilePath(String username) {
+        return userDataDir + username + ".json";
+    }
+
+    private User readUserFile(String username) {
+        File userFile = new File(getUserFilePath(username));
+
+        if (!userFile.exists()) {
+            System.out.println("User file not found: " + username);
+            return null;
+        }
+
+        try (FileReader reader = new FileReader(userFile)) {
+            User user = gson.fromJson(reader, User.class);
+            System.out.println("Successfully loaded user: " + username);
+            return user;
+        } catch (Exception e) {
+            System.err.println("Error reading user file for " + username + ": " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void writeUserFile(User user) {
+        String filePath = getUserFilePath(user.getUsername());
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            gson.toJson(user, writer);
+            System.out.println("Successfully saved user: " + user.getUsername());
+        } catch (IOException e) {
+            System.err.println("Error writing user file for " + user.getUsername() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // ==================== 接口实现 ====================
 
     @Override
-    public void setCurrentUser(String username){
+    public void setCurrentUser(String username) {
         this.currentUser = username;
     }
 
     @Override
-    public String getCurrentUser(){
+    public String getCurrentUser() {
         return this.currentUser;
     }
 
     @Override
     public void createUser(String username, String password, int accountID) {
-        Map<String, User> map = readFile();
-        if (!map.containsKey(username)) {
-            map.put(username, new User(username, password, accountID));
-            writeFile(map);
-            System.out.println("Created user: " + username);
-        } else {
+        if (existsByName(username)) {
             System.out.println("User already exists: " + username);
+            return;
         }
+
+        // 创建新用户
+        User newUser = new User(username, password, accountID);
+        writeUserFile(newUser);
+
+        // 更新索引
+        UserIndex index = readIndex();
+        index.usernameToAccountID.put(username, accountID);
+        index.accountIDToUsername.put(accountID, username);
+        writeIndex(index);
+
+        System.out.println("Created user: " + username);
     }
 
     @Override
-    public boolean existsByName(String username){
-        Map<String, User> map = readFile();
-        return map.containsKey(username);
+    public boolean existsByName(String username) {
+        UserIndex index = readIndex();
+        return index.usernameToAccountID.containsKey(username);
     }
 
     @Override
-    public boolean existsByAccountID(int accountID){
-        Map<String, User> map = readFile();
-        for (User user : map.values()) {
-            if  (user.getAccountID() == accountID) {return true;}
-        }
-        return false;
+    public boolean existsByAccountID(int accountID) {
+        UserIndex index = readIndex();
+        return index.accountIDToUsername.containsKey(accountID);
     }
 
     @Override
     public User getUser(String username) {
-        Map<String, User> map = readFile();
-
-        // 调试信息
-        System.out.println("=== Get User Debug ===");
+        System.out.println("=== Get User ===");
         System.out.println("Looking for: '" + username + "'");
-        System.out.println("Available users: " + map.keySet());
 
-        User user = map.get(username);
-        System.out.println("User found: " + (user != null));
+        User user = readUserFile(username);
 
         if (user == null) {
-            System.out.println("Trying with trimmed username...");
-            user = map.get(username.trim());
-            System.out.println("User found after trim: " + (user != null));
+            System.out.println("User not found, trying trimmed username...");
+            user = readUserFile(username.trim());
         }
 
+        System.out.println("User found: " + (user != null));
         return user;
     }
 
+    // ==================== 观看列表管理 ====================
+
     public void addToWatchlist(String username, Media movie) {
-        Map<String, User> map = readFile();
-        User user = map.get(username);
+        User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
         user.addWatchlist(movie.getReferenceNumber());
-        writeFile(map);
+        writeUserFile(user);
     }
 
     public void deleteFromWatchlist(String username, Media movie) {
-        Map<String, User> map = readFile();
-        User user = map.get(username);
+        User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
         user.removeWatchList(movie.getReferenceNumber());
-        writeFile(map);
-    }
-
-    public void addToFavoritelist(String username, Media movie) {
-        Map<String, User> map = readFile();
-        User user = map.get(username);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + username);
-        }
-        user.addFavorite(movie.getReferenceNumber());
-        writeFile(map);
-    }
-
-    public void deleteFromFavoritelist(String username, Media movie) {
-        Map<String, User> map = readFile();
-        User user = map.get(username);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + username);
-        }
-        user.removeFavorite(movie.getReferenceNumber());
-        writeFile(map);
+        writeUserFile(user);
     }
 
     public List<Integer> getWatchlist(String username) {
@@ -181,6 +195,26 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         return user.getWatchlist();
     }
 
+    // ==================== 收藏列表管理 ====================
+
+    public void addToFavoritelist(String username, Media movie) {
+        User user = getUser(username);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
+        user.addFavorite(movie.getReferenceNumber());
+        writeUserFile(user);
+    }
+
+    public void deleteFromFavoritelist(String username, Media movie) {
+        User user = getUser(username);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + username);
+        }
+        user.removeFavorite(movie.getReferenceNumber());
+        writeUserFile(user);
+    }
+
     public List<Integer> getFavoritelist(String username) {
         User user = getUser(username);
         if (user == null) {
@@ -189,14 +223,16 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         return user.getFavorites();
     }
 
+    // ==================== 评论管理 ====================
+
     @Override
     public void addComment(String username, Comment comment) {
-        Map<String, User> map = readFile();
-        if (!map.containsKey(username)) {
-            throw new RuntimeException("User '" + username + "' does not exist in users.json");
+        User user = getUser(username);
+        if (user == null) {
+            throw new RuntimeException("User '" + username + "' does not exist");
         }
-        map.get(username).addcomment(comment);
-        writeFile(map);
+        user.addcomment(comment);
+        writeUserFile(user);
     }
 
     public List<Comment> getComments(String username) {
@@ -207,6 +243,8 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         return user.getComments();
     }
 
+    // ==================== 密码管理 ====================
+
     public String getPassword(String username) {
         User user = getUser(username);
         if (user == null) {
@@ -216,12 +254,12 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
     }
 
     public void changePassword(String username, String newPassword) {
-        Map<String, User> map = readFile();
-        User user = map.get(username);
+        User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
         user.setPassword(newPassword);
-        writeFile(map);
+        writeUserFile(user);
     }
+
 }

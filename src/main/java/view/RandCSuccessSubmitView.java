@@ -5,13 +5,17 @@ import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
+import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
-import interface_adapter.rate_and_comment.CommentState;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -20,109 +24,222 @@ public class RandCSuccessSubmitView extends JPanel implements PropertyChangeList
     private JButton returnButton;
     private JButton homeButton;
     private JLabel messageLabel;
+    private JLabel movieNameLabel;
     private ViewManagerModel viewManagerModel;
     private RandCSuccessViewModel randCSuccessViewModel;
     private ClickingViewModel clickingViewModel;
     private HomeViewModel homeViewModel;
     private String viewname = "RandC";
 
-    // 构造函数：从外部传入电影名
+    // 现代配色
+    private static final Color PRIMARY_BG = new Color(248, 250, 252);
+    private static final Color SUCCESS_GREEN = new Color(34, 197, 94);
+    private static final Color ACCENT_BLUE = new Color(59, 130, 246);
+    private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
+    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
+    private static final Color CARD_BG = Color.WHITE;
+
     public RandCSuccessSubmitView(ViewManagerModel viewManagerModel, RandCSuccessViewModel randCSuccessViewModel,
                                   ClickingViewModel clickingViewModel, HomeViewModel homeViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.randCSuccessViewModel = randCSuccessViewModel;
         this.clickingViewModel = clickingViewModel;
         this.homeViewModel = homeViewModel;
+        this.randCSuccessViewModel.addPropertyChangeListener(this);
         initUI();
     }
 
     private void initUI() {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(245, 245, 245));
+        setLayout(new GridBagLayout());
+        setBackground(PRIMARY_BG);
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        // 提示文字
-        messageLabel = new JLabel(
-                "<html><div style='text-align:center;'>You have submitted the rate and comment for<br>"
-                        + "<b>\"" + movieName + "\"</b> successfully.</div></html>",
-                SwingConstants.CENTER
-        );
+        // ====== 主卡片容器 ======
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setBackground(CARD_BG);
+        cardPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+                new EmptyBorder(40, 50, 40, 50)
+        ));
+        cardPanel.setPreferredSize(new Dimension(500, 400));
+
+        // ====== 成功图标 ======
+        JPanel iconPanel = createSuccessIcon();
+        iconPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(iconPanel);
+
+        cardPanel.add(Box.createVerticalStrut(25));
+
+        // ====== 成功标题 ======
+        JLabel successTitle = new JLabel("Success!");
+        successTitle.setFont(new Font("SansSerif", Font.BOLD, 32));
+        successTitle.setForeground(SUCCESS_GREEN);
+        successTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(successTitle);
+
+        cardPanel.add(Box.createVerticalStrut(15));
+
+        // ====== 提示消息 ======
+        messageLabel = new JLabel("Your review has been submitted for");
         messageLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        messageLabel.setForeground(new Color(40, 40, 40));
-        add(messageLabel, BorderLayout.CENTER);
+        messageLabel.setForeground(TEXT_SECONDARY);
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(messageLabel);
 
-        // Return 按钮，返回clicking电影界面
-        returnButton = new JButton("Return");
-        returnButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        returnButton.setBackground(new Color(70, 130, 180));
-        returnButton.setForeground(Color.WHITE);
-        returnButton.setFocusPainted(false);
-        returnButton.setPreferredSize(new Dimension(100, 40));
+        cardPanel.add(Box.createVerticalStrut(10));
 
-        // 点击事件（此处留空逻辑，未来可替换为切换 UI）
+        // ====== 电影名称（高亮显示）======
+        movieNameLabel = new JLabel(movieName != null ? "\"" + movieName + "\"" : "");
+        movieNameLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        movieNameLabel.setForeground(ACCENT_BLUE);
+        movieNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(movieNameLabel);
+
+        cardPanel.add(Box.createVerticalStrut(10));
+
+        // ====== 感谢消息 ======
+        JLabel thankYouLabel = new JLabel("Thank you for sharing your thoughts!");
+        thankYouLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        thankYouLabel.setForeground(TEXT_SECONDARY);
+        thankYouLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(thankYouLabel);
+
+        cardPanel.add(Box.createVerticalStrut(35));
+
+        // ====== 按钮面板 ======
+        JPanel buttonPanel = createButtonPanel();
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cardPanel.add(buttonPanel);
+
+        // 添加卡片到主面板
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(cardPanel, gbc);
+    }
+
+    /**
+     * 创建成功图标（对勾）
+     */
+    private JPanel createSuccessIcon() {
+        JPanel iconPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int size = 80;
+                int x = (getWidth() - size) / 2;
+                int y = (getHeight() - size) / 2;
+
+                // 绘制圆形背景
+                g2d.setColor(new Color(34, 197, 94, 30)); // 浅绿色背景
+                g2d.fillOval(x, y, size, size);
+
+                // 绘制边框
+                g2d.setColor(SUCCESS_GREEN);
+                g2d.setStroke(new BasicStroke(3));
+                g2d.drawOval(x + 2, y + 2, size - 4, size - 4);
+
+                // 绘制对勾
+                g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                int checkX = x + size / 2 - 15;
+                int checkY = y + size / 2;
+
+                // 对勾的左边
+                g2d.drawLine(checkX, checkY, checkX + 10, checkY + 10);
+                // 对勾的右边
+                g2d.drawLine(checkX + 10, checkY + 10, checkX + 25, checkY - 8);
+            }
+        };
+        iconPanel.setPreferredSize(new Dimension(100, 100));
+        iconPanel.setMaximumSize(new Dimension(100, 100));
+        iconPanel.setBackground(CARD_BG);
+        return iconPanel;
+    }
+
+    /**
+     * 创建按钮面板
+     */
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        buttonPanel.setBackground(CARD_BG);
+
+        // Return 按钮
+        returnButton = createStyledButton("Back to Movie", ACCENT_BLUE, Color.WHITE, true);
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //清空此界面及对应的viewmodel
                 randCSuccessViewModel.setState(new RandCSuccessState());
                 randCSuccessViewModel.firePropertyChange();
-                // TODO: 切换回clicking界面, 注意确保clicking界面原有数据还在
                 viewManagerModel.setState(clickingViewModel.getViewName());
                 viewManagerModel.firePropertyChange();
-
             }
         });
-        // Home Button, 跳转到主页
-        homeButton = new JButton("Home");
-        homeButton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        homeButton.setBackground(new Color(70, 130, 180));
-        homeButton.setForeground(Color.WHITE);
-        homeButton.setFocusPainted(false);
-        homeButton.setPreferredSize(new Dimension(100, 40));
 
+        // Home 按钮
+        homeButton = createStyledButton("Go to Home", new Color(100, 116, 139), Color.WHITE, false);
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //清空viewmodel和对应view
                 randCSuccessViewModel.setState(new RandCSuccessState());
                 randCSuccessViewModel.firePropertyChange();
-                //清空clicking view
                 clickingViewModel.setState(new ClickingState());
                 clickingViewModel.firePropertyChange();
-                //切换到homeview
                 viewManagerModel.setState(homeViewModel.getViewName());
                 viewManagerModel.firePropertyChange();
-                //TODO清除clickingpage
-
             }
         });
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(245, 245, 245));
-        bottomPanel.add(returnButton);
-        bottomPanel.add(homeButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        buttonPanel.add(returnButton);
+        buttonPanel.add(homeButton);
+
+        return buttonPanel;
+    }
+
+    /**
+     * 创建样式化按钮
+     */
+    private JButton createStyledButton(String text, Color bgColor, Color fgColor, boolean isPrimary) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setForeground(fgColor);
+        button.setBackground(bgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(150, 44));
+
+        // 悬停效果
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (isPrimary) {
+                    button.setBackground(bgColor.darker());
+                } else {
+                    button.setBackground(bgColor.brighter());
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);
+            }
+        });
+
+        return button;
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         RandCSuccessState state = (RandCSuccessState) evt.getNewValue();
         movieName = state.getMedianame();
-
+        movieNameLabel.setText(movieName != null ? "\"" + movieName + "\"" : "");
     }
 
     public String getViewName() {
         return this.viewname;
     }
-
-    // 测试运行
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("Submission Success");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setSize(500, 200);
-//            frame.setLocationRelativeTo(null);
-//            frame.add(new RandCSuccessSubmitView("Inception")); // 传入电影名
-//            frame.setVisible(true);
-//        });
-//    }
 }

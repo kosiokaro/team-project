@@ -71,24 +71,31 @@ public class AppBuilder {
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
+        //view models must be set up here to make the main run without concern of the order of the view's set up.
+        signupViewModel = new SignupViewModel();
+        loginViewModel = new LoginViewModel();
+        clickingViewModel = new ClickingViewModel();
+        commentViewModel = new CommentViewModel();
+        randCSuccessViewModel = new RandCSuccessViewModel();
+        homeViewModel = new HomeViewModel();
     }
 
     public AppBuilder addSignUpView() {
-        signupViewModel = new SignupViewModel();
+
         signupView = new SignupView(signupViewModel);
         cardPanel.add(signupView, signupView.getViewName());
         return this;
     }
 
     public AppBuilder addLoginView() {
-        loginViewModel = new LoginViewModel();
+
         loginView = new LoginView(loginViewModel);
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
   
     public AppBuilder addClickingView() {
-        clickingViewModel = new ClickingViewModel();
+
         clickingView = new ClickingView(clickingViewModel,commentViewModel,viewManagerModel);
         cardPanel.add(clickingView, clickingView.getViewName());
 
@@ -139,14 +146,14 @@ public class AppBuilder {
     }
 
     public AppBuilder addRateAndCommentView() {
-        commentViewModel = new CommentViewModel();
+
         rateAndCommentView = new RateAndCommentView(viewManagerModel,commentViewModel,clickingViewModel);
         cardPanel.add(rateAndCommentView,rateAndCommentView.getViewName());
         return this;
     }
   
     public AppBuilder addRandCView() {
-        randCSuccessViewModel = new RandCSuccessViewModel();
+
         randCSuccessSubmitView = new RandCSuccessSubmitView(viewManagerModel, randCSuccessViewModel, clickingViewModel,
                 homeViewModel);
         cardPanel.add(randCSuccessSubmitView, randCSuccessSubmitView.getViewName());
@@ -161,7 +168,7 @@ public class AppBuilder {
    
    
     public AppBuilder addHomepageView() {
-        homeViewModel = new HomeViewModel();
+
         homepageView = new HomepageView(homeViewModel);
         cardPanel.add(homepageView, homepageView.getViewName());
 
@@ -223,7 +230,7 @@ public class AppBuilder {
     }
 
     public JFrame build() {
-        final JFrame application = new JFrame("Homepage");
+        final JFrame application = new JFrame("Movie App");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         application.add(cardPanel);
