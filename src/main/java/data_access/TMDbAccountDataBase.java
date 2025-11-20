@@ -3,7 +3,8 @@ package data_access;
 import org.json.JSONException;
 import entity.Media;
 import entity.User;
-import entity.TVShow;
+import entity.Movie;
+
 import entity.Watchlist;
 
 
@@ -15,11 +16,11 @@ public interface TMDbAccountDataBase {
     boolean removeFromWatchList(Media media, Watchlist watchlist, User user) throws JSONException;
 
     //  Gets all media in watchlist
-    Media[] getWatchlistMedia() throws JSONException;
+    Movie[] getMovies() throws JSONException;
 
     //  Gets all media in favorites
 
-    Media[] getFavorites() throws JSONException;
+    Movie[] getFavorites() throws JSONException;
 
     //  Adds to favorites
     boolean addToFavorites(Media media) throws JSONException;
@@ -28,6 +29,6 @@ public interface TMDbAccountDataBase {
     boolean removeFromFavorites(Media media) throws JSONException;
 
     //  Get rating
-    int getRating(Media media) throws JSONExceptionl;
+    int getRating(Media media) throws JSONException;
 
 }

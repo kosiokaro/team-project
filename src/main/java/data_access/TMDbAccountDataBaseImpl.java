@@ -5,12 +5,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import entity.Media;
-import entity.Watchlist;
-import entity.User;
+
 import entity.Movie;
-import entity.TVShow;
-import entity.Episode;
+
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,152 +17,91 @@ import okhttp3.MediaType;
 
 
 public class TMDbAccountDataBaseImpl implements TMDbAccountDataBase {
-    private static final String BEARER_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM ";
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
-    private static final String ACCOUNT_ID = "account_id";
     private final OkHttpClient client;
+    private final String bearerToken;
+
+    private static String getAPIToken() {
+        String token = System.getenv("TMDB_BEARER_TOKEN");
+        if (token == null || token.isEmpty()) {
+            throw new RuntimeException("TMDB_BEARER_TOKEN environment variable not set!");
+        }
+        return token;
+    }
 
     private TMDbAccountDataBaseImpl() {
         this.client = new OkHttpClient();
+        this.bearerToken = getAPIToken();
     }
 
-    //    Watchlist modification helper methods
-    private boolean sendWatchlistRequest(Media media, boolean add){
-        String mediaType = "movie";
-
-        JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("media_type", mediaType);
-            jsonBody.put("media_id", media.getId());
-            jsonBody.put("watchlist", add); // true for add, false for remove
-        } catch (JSONException e) {
-            System.err.println("Error creating JSON body: " + e.getMessage());
-            return false;
-        }
-
-        RequestBody body = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
+    @Override
+    public Movie[] getMovies() throws JSONException {
+        // This is the correct endpoint for discovering popular movies
+        String url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
 
         Request request = new Request.Builder()
-                .url(BASE_URL + "/account/" + ACCOUNT_ID + "/watchlist")
-                .post(body)
-                .addHeader("accept", "application/json")
-                .addHeader("content-type", "application/json")
-                .addHeader("Authorization", "Bearer " + BEARER_TOKEN)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            // TMDb returns 201 for success, or 200 if the item status was simply updated
-            return response.isSuccessful();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean addToWatchList(Media media, Watchlist watchlist) throws JSONException {
-        // Note: The Watchlist parameter is ignored as TMDb API manages the single list per user.
-        return sendWatchlistRequest(media, true);
-    }
-
-    @Override
-    public boolean removeFromWatchList(Media media, Watchlist watchlist, User user) throws JSONException {
-        // Note: Watchlist and User parameters are ignored as the token handles auth/account.
-        return sendWatchlistRequest(media, false);
-    }
-
-    @Override
-    public Media[] getWatchlistMedia() throws JSONException {
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/account/" + ACCOUNT_ID + "/watchlist/movies")
+                .url(url)
                 .get()
                 .addHeader("accept", "application/json")
-                .addHeader("Authorization", "Bearer " + BEARER_TOKEN)
+                .addHeader("Authorization", "Bearer " + bearerToken)
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
-                // Parsing data logic
+                // 1. Get the main JSON object from the response body
                 JSONObject responseBody = new JSONObject(response.body().string());
+
+                // 2. Extract the 'results' array
                 JSONArray results = responseBody.getJSONArray("results");
-                // The results JSONArray must be iterated over to build Media[] entities.
-                System.out.println("Watchlist fetched successfully. Implement JSON parsing to convert to Media entities.");
-                return new Media[results.length()]; // Placeholder return
+
+                // 3. Initialize the array of Movie entities
+                Movie[] movies = new Movie[results.length()];
+
+                // 4. Iterate and parse each movie object
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject movieJson = results.getJSONObject(i);
+
+                    // Extract necessary data fields
+                    int id = movieJson.getInt("id");
+                    String title = movieJson.getString("title");
+                    String overview = movieJson.getString("overview");
+                    String releaseDate = movieJson.getString("release_date");
+                    double voteAverage = movieJson.getDouble("vote_average");
+
+                    // Create a new Movie entity (assuming your Movie class supports these fields)
+                    Movie movie = new Movie(id, title, overview, releaseDate, voteAverage);
+                    movies[i] = movie;
+                }
+
+                System.out.println("Popular movies fetched and parsed successfully.");
+                return movies; // Return the array of Movie objects
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new Media[0];
+
+        // Return an empty array if the request fails
+        return new Movie[0];
     }
 
-    // Favorites
-    private boolean sendFavoriteRequest(Media media, boolean favorite) {
-        String mediaType = "movie";
-
-        JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("media_type", mediaType);
-            jsonBody.put("media_id", media.getId());
-            jsonBody.put("favorite", favorite); // true for add, false for remove
-        } catch (JSONException e) {
-            System.err.println("Error creating JSON body: " + e.getMessage());
-            return false;
-        }
-
-        RequestBody body = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
-
+    @Override
+    public int getRating() throws JSONException {
         Request request = new Request.Builder()
-                .url(BASE_URL + "/account/" + ACCOUNT_ID + "/favorite")
-                .post(body)
-                .addHeader("accept", "application/json")
-                .addHeader("content-type", "application/json")
-                .addHeader("Authorization", "Bearer " + BEARER_TOKEN)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.isSuccessful();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean addToFavorites(Media media) throws JSONException {
-        return sendFavoriteRequest(media, true);
-    }
-
-    @Override
-    public boolean removeFromFavorites(Media media) throws JSONException {
-        return sendFavoriteRequest(media, false);
-    }
-
-    @Override
-    public Media[] getFavorites() throws JSONException {
-        // Implementation is nearly identical to getWatchlistMovies, but uses the "/favorites/movies" endpoint
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/account/" + ACCOUNT_ID + "/favorite/movies")
+                .url(BASE_URL + "guest_session/guest_session_id/rated/movies?language=en-US&page=1&sort_by=created_at.asc")
                 .get()
                 .addHeader("accept", "application/json")
-                .addHeader("Authorization", "Bearer " + BEARER_TOKEN)
+                .addHeader("Authorization", "Bearer " + bearerToken)  // Use instance variable
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
-                // PUT PARSING LOGIC HERE
-                System.out.println("Favorites fetched successfully. Implement JSON parsing to convert to Media entities.");
+                JSONObject responseBody = new JSONObject(response.body().string());
+                // TODO: Parse rating from response
+                return responseBody.optInt("rating", 0);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new Media[0];
-    }
-
-    @Override
-    public int getRating(Media media) throws JSONException {
-        // NOTE: TMDb API requires a guest_session_id or a full session_id for rating, so we need to
-        // ensure we can generate a session ID first.
-        System.out.println("Rating functionality requires a user session ID.");
         return 0;
     }
 
