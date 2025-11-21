@@ -30,7 +30,7 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     private JLabel genresLabel = new JLabel();
     private JButton rateButton = new JButton("⭐ Rate and Comment");
     private JButton backButton = new JButton("← Back");
-    private JButton exitButton = new JButton("✕");
+    private JButton exitButton = new JButton("×");
 
     private final String viewName = "clicking";
     private String previousViewName = "BROWSE";

@@ -199,8 +199,6 @@ public class AppBuilder {
     }
 
 
-     
-
     public AppBuilder addSignupUseCase(){
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
                 signupViewModel, loginViewModel);
