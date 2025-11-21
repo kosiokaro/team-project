@@ -190,6 +190,11 @@ public class AppBuilder {
             viewManagerModel.firePropertyChange();
         });
 
+        homepageView.setLogoutButtonListener(e -> {
+            viewManagerModel.setState("log in");
+            viewManagerModel.firePropertyChange();
+        });
+
         return this;
     }
 
