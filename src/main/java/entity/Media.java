@@ -1,14 +1,18 @@
 package entity;
 
 public abstract class Media {
-    public String name;
+    public String title;
     private final int referenceNumber;
     public int[] genreIDs;
+    public String posterUrl;
+    public String language;
 
-    public Media(String name, int referenceNumber, int[] genreIDs) {
-        this.name = name;
+    public Media(String title, int referenceNumber, int[] genreIDs,String posterUrl,String language) {
+        this.title = title;
         this.referenceNumber = referenceNumber;
         this.genreIDs = genreIDs;
+        this.posterUrl = posterUrl;
+        this.language =  language;
     }
 
     public int  getReferenceNumber() {
