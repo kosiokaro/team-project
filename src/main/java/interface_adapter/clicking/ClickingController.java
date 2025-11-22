@@ -11,4 +11,6 @@ public class ClickingController {
     public void onClick(int mediaID){
         interactor.execute(new ClickingInputData(mediaID));
     }
+
 }
+
