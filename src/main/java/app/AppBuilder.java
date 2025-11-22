@@ -48,23 +48,23 @@ public class AppBuilder {
     //views and view models
     private SignupView signupView;
     private SignupViewModel signupViewModel;
-  
+
     private LoginView loginView;
     private LoginViewModel  loginViewModel;
-  
+
     private WatchlistView watchlistView;
     private FavoritesView favoritesView;
     private BrowseView browseView;
 
     private HomepageView homepageView;
     private HomeViewModel homeViewModel;
-  
+
     private RateAndCommentView rateAndCommentView;
     private CommentViewModel commentViewModel;
-  
+
     private RandCSuccessSubmitView randCSuccessSubmitView;
     private RandCSuccessViewModel randCSuccessViewModel;
-  
+
     private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
 
@@ -93,7 +93,7 @@ public class AppBuilder {
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
-  
+
     public AppBuilder addClickingView() {
 
         clickingView = new ClickingView(clickingViewModel,commentViewModel,viewManagerModel);
@@ -136,12 +136,34 @@ public class AppBuilder {
     public AppBuilder addWatchlistView() {
         watchlistView = new WatchlistView();
         cardPanel.add(watchlistView, watchlistView.getViewName());
+
+        watchlistView.setswitchtofavButtonListener(e -> {
+            viewManagerModel.setState(favoritesView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
+        watchlistView.sethomeButtonListener(e -> {
+            viewManagerModel.setState(homepageView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
         return this;
     }
 
     public AppBuilder addFavoritesView() {
         favoritesView = new FavoritesView();
         cardPanel.add(favoritesView, favoritesView.getViewName());
+
+        favoritesView.setswitchtowatchButtonListener(e -> {
+            viewManagerModel.setState(watchlistView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
+        favoritesView.sethomeButtonListener(e -> {
+            viewManagerModel.setState(homepageView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
         return this;
     }
 
@@ -151,7 +173,7 @@ public class AppBuilder {
         cardPanel.add(rateAndCommentView,rateAndCommentView.getViewName());
         return this;
     }
-  
+
     public AppBuilder addRandCView() {
 
         randCSuccessSubmitView = new RandCSuccessSubmitView(viewManagerModel, randCSuccessViewModel, clickingViewModel,
@@ -165,8 +187,6 @@ public class AppBuilder {
 //        return this;
 //    }
 
-   
-   
     public AppBuilder addHomepageView() {
 
         homepageView = new HomepageView(homeViewModel);
@@ -190,16 +210,11 @@ public class AppBuilder {
             viewManagerModel.firePropertyChange();
         });
 
-        homepageView.setLogoutButtonListener(e -> {
-            viewManagerModel.setState("log in");
-            viewManagerModel.firePropertyChange();
-        });
-
         return this;
     }
 
 
-     
+
 
     public AppBuilder addSignupUseCase(){
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
