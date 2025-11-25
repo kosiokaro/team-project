@@ -13,6 +13,7 @@ public class Main {
                 .addFavoritesView()
                 .addRateAndCommentView()
                 .addClickingView()
+                .addClickingUseCase()
                 .addRandCView()
                 .addBrowseView()
                 .addBrowseUseCase()
