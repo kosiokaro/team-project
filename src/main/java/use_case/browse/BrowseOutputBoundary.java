@@ -4,8 +4,7 @@ public interface BrowseOutputBoundary {
 
     void populateView(BrowseOutputData browseOutputData);
 
-
-    void prepareError(String errorMessage);
+    void prepareError(BrowseOutputData browseOutputData);
 
     void prepareSelectMovieView();
 

@@ -1,15 +1,15 @@
 package use_case.browse;
 
+import entity.BrowsePage;
+
 public interface BrowseInputBoundary {
 
     void execute(BrowseInputData browseInputData);
 
-    void updatePage();
+    void selectMovie(BrowseInputData browseInputData);
 
-    void selectMovie();
+    void addToFavorite(BrowseInputData browseInputData);
 
-    void addToFavorite();
-
-    void addToWatchlist();
+    void addToWatchlist(BrowseInputData browseInputData);
 
 }

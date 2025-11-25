@@ -1,5 +1,12 @@
 package interface_adapter.browse;
 
-public class BrowseViewModel {
+import interface_adapter.ViewModel;
 
+public class BrowseViewModel extends ViewModel<BrowseState> {
+
+    public BrowseViewModel() {
+        super("browseView");
+        setState(new BrowseState());
+
+    }
 }

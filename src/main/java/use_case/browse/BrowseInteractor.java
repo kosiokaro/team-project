@@ -1,6 +1,7 @@
 package use_case.browse;
 
 
+import entity.BrowsePage;
 import entity.BrowseRequestBuilder;
 
 public class BrowseInteractor implements BrowseInputBoundary {
@@ -16,7 +17,6 @@ public class BrowseInteractor implements BrowseInputBoundary {
     @Override
     public void execute(BrowseInputData browseInputData) {
         BrowseRequestBuilder builder = new BrowseRequestBuilder();
-
         if(browseInputData.isQuery){
             if(browseInputData.title.isEmpty()){
                 if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
@@ -31,29 +31,28 @@ public class BrowseInteractor implements BrowseInputBoundary {
                 else if(browseInputData.sortAscending){builder.sortByRatingAsc();}
                 else if(browseInputData.sortDescending){builder.sortByRatingDesc();}
             }
-
-
         }
 
-    }
+        BrowsePage outputPage = this.browseDataAccessObject.getPage(builder);
+        BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
+        this.browsePresenter.populateView(browseOutputData);
 
-    @Override
-    public void updatePage() {
-
-    }
-
-    @Override
-    public void selectMovie() {
 
     }
 
     @Override
-    public void addToFavorite() {
+    public void selectMovie(BrowseInputData browseInputData) {
 
     }
 
     @Override
-    public void addToWatchlist() {
+    public void addToFavorite(BrowseInputData browseInputData) {
+        //TODO: Implement
+    }
+
+    @Override
+    public void addToWatchlist(BrowseInputData browseInputData) {
+        //TODO: Implement
 
     }
 }
