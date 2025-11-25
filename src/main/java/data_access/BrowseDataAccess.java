@@ -17,24 +17,24 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
     private static final int SUCCESS_CODE = 200;
 
     @Override
-    public BrowsePage getPage(String query) {
+    public BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(query)
+                .url(browseRequestBuilder.getRequest())
                 .get()
                 .addHeader("accept", "application/json")
-                .addHeader("Authorization","")
+                .addHeader("Authorization","Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM")
                 .build();
 
         try{
             final Response response = client.newCall(request).execute();
             final JSONObject responseBody = new JSONObject(response.body().string());
             return makeBrowsePage(responseBody);
-
+            //TODO make another API call to get runtimes
         } catch (Exception e) {
             Movie[] movies = {};
-            return new BrowsePage(movies,1);
+            return new BrowsePage(movies,e);
         }
 
     }
@@ -84,12 +84,6 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
 
         return new BrowsePage(movies,jsonObject.getInt("page"));
 
-    }
-
-    public static void main(String[] args) {
-        BrowseRequestBuilder builder = new BrowseRequestBuilder();
-        BrowseDataAccess dataAccess = new BrowseDataAccess();
-        BrowsePage browse = dataAccess.getPage(builder.getRequest());
     }
 
 }
