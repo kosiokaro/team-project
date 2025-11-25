@@ -15,6 +15,8 @@ public class Main {
                 .addClickingView()
                 .addClickingUseCase()
                 .addRandCView()
+                .addBrowseView()
+                .addBrowseUseCase()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addCommentUseCase()

@@ -17,11 +17,11 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
     private static final int SUCCESS_CODE = 200;
 
     @Override
-    public BrowsePage getPage(String query) {
+    public BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(query)
+                .url(browseRequestBuilder.getRequest())
                 .get()
                 .addHeader("accept", "application/json")
                 .addHeader("Authorization","")
@@ -31,10 +31,10 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
             final Response response = client.newCall(request).execute();
             final JSONObject responseBody = new JSONObject(response.body().string());
             return makeBrowsePage(responseBody);
-
+            //TODO make another API call to get runtimes
         } catch (Exception e) {
             Movie[] movies = {};
-            return new BrowsePage(movies,1);
+            return new BrowsePage(movies,e);
         }
 
     }
@@ -84,12 +84,6 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
 
         return new BrowsePage(movies,jsonObject.getInt("page"));
 
-    }
-
-    public static void main(String[] args) {
-        BrowseRequestBuilder builder = new BrowseRequestBuilder();
-        BrowseDataAccess dataAccess = new BrowseDataAccess();
-        BrowsePage browse = dataAccess.getPage(builder.getRequest());
     }
 
 }
