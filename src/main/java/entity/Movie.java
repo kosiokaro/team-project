@@ -16,4 +16,12 @@ public class Movie extends Media {
         this.runtime = runtime;
 
     }
+
+    public String getTitle() { return title; }
+    public int getReferenceNumber() {
+        int referenceNumber = 0;
+        return referenceNumber; }
+//    public List<String> getGenres() { return genres; }
+//    public String getOverview() { return overview; }
+//    public double getVoteAverage() { return voteAverage; }
 }

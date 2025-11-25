@@ -1,6 +1,9 @@
 package view;
 
+import entity.Movie;
 import interface_adapter.home.HomeState;
+import interface_adapter.watchlist.WatchlistController;
+import interface_adapter.watchlist.WatchlistViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +12,8 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WatchlistView extends JPanel {
+public class WatchlistView extends JPanel implements java.beans.PropertyChangeListener {
+
     public final String viewName = "WATCHLIST";
     private JLabel titleLabel;
     private JButton switchButton;
@@ -29,9 +33,19 @@ public class WatchlistView extends JPanel {
     private List<MediaCardData> allMediaData;
     private java.util.function.Consumer<Integer> detailsClickListener;
 
-    public WatchlistView() {
+    private WatchlistController watchlistController;
+    private final WatchlistViewModel watchlistViewModel;
+
+    public void setWatchlistController(WatchlistController controller) {
+        this.watchlistController = controller;
+    }
+
+    public WatchlistView(WatchlistViewModel watchlistViewModel, WatchlistController watchlistController) {
+        this.watchlistViewModel = watchlistViewModel;
+        this.watchlistController = watchlistController;
         this.setLayout(new BorderLayout());
-        this.allMediaData = new ArrayList<>();  // Initialize the list!
+        this.allMediaData = new ArrayList<>();
+        this.watchlistViewModel.addPropertyChangeListener(this);
 
         titleLabel = new JLabel("My Watchlist", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
@@ -282,6 +296,23 @@ public class WatchlistView extends JPanel {
         MediaCardData data = new MediaCardData(title, id, genres, description, rating);
         allMediaData.add(data);
         filterByGenre();
+    }
+
+    // Inside WatchlistView (which implements PropertyChangeListener):
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        // This code ONLY runs when the Presenter calls firePropertyChanged().
+
+        // 1. Get the updated data from the ViewModel
+        List<Movie> newWatchlist = this.watchlistViewModel.getWatchlist();
+        String error = this.watchlistViewModel.getErrorMessage();
+
+        // 2. Use the new data to physically redraw the GUI elements
+        if (error != null) {
+            // Show error message
+        } else {
+            // Clear old movie list and display newWatchlist
+        }
     }
 
     public void setswitchtofavButtonListener(ActionListener listener) {

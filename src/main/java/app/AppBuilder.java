@@ -1,6 +1,7 @@
 package app;
 
 
+import data_access.BrowseDataAccess;
 import data_access.ClickingDataAccessTMDb;
 import data_access.FileUserDataAccessObject;
 
@@ -19,6 +20,12 @@ import interface_adapter.rate_and_comment.CommentViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.watchlist.WatchlistController;
+import interface_adapter.watchlist.WatchlistViewModel;
+import interface_adapter.watchlist.WatchlistPresenter;
+import interface_adapter.watchlist.WatchlistInteractor;
+
+
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -53,6 +60,10 @@ public class AppBuilder {
     private LoginViewModel  loginViewModel;
 
     private WatchlistView watchlistView;
+    private WatchlistController watchlistController;
+    private WatchlistViewModel watchlistViewModel;
+
+
     private FavoritesView favoritesView;
     private BrowseView browseView;
 
@@ -79,6 +90,7 @@ public class AppBuilder {
         commentViewModel = new CommentViewModel();
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
+        watchlistViewModel = new WatchlistViewModel();
     }
 
     public AppBuilder addSignUpView() {
@@ -135,7 +147,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addWatchlistView() {
-        watchlistView = new WatchlistView();
+        watchlistView = new WatchlistView(this.watchlistViewModel, null);
         cardPanel.add(watchlistView, watchlistView.getViewName());
 
         watchlistView.setswitchtofavButtonListener(e -> {
@@ -155,6 +167,27 @@ public class AppBuilder {
                 System.err.println("ClickingController not initialized! Make sure addClickingUseCase() is called before addWatchlistView()");
             }
         });
+
+        return this;
+    }
+
+    public AppBuilder addWatchlistUseCase() {
+        BrowseDataAccess movieDAO = new BrowseDataAccess(); // Or get the one instantiated outside
+
+        final WatchlistPresenter watchlistPresenter = new WatchlistPresenter(
+                this.watchlistViewModel,
+                this.viewManagerModel
+        );
+
+        final WatchlistInteractor watchlistInteractor = new WatchlistInteractor(
+                this.userDataAccessObject,
+                watchlistPresenter,
+                movieDAO
+        );
+
+        this.watchlistController = new WatchlistController(watchlistInteractor);
+
+        this.watchlistView.setWatchlistController(this.watchlistController);
 
         return this;
     }

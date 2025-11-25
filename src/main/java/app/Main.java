@@ -19,6 +19,7 @@ public class Main {
                 .addSignupUseCase()
                 .addCommentUseCase()
                 .addClickingUseCase()
+                .addWatchlistUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);
