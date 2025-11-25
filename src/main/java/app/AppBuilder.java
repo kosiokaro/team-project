@@ -67,6 +67,7 @@ public class AppBuilder {
 
     private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
+    private ClickingController clickingController;
 
 
     public AppBuilder() {
@@ -128,7 +129,7 @@ public class AppBuilder {
         final ClickingInputBoundary clickingInteractor = new ClickingInteractor(
                 clickingPresenter, clickingDataAccess);
 
-        final ClickingController clickingController = new ClickingController(clickingInteractor);
+        this.clickingController = new ClickingController(clickingInteractor);
         clickingView.setClickingController(clickingController);
         return this;
     }
@@ -145,6 +146,14 @@ public class AppBuilder {
         watchlistView.sethomeButtonListener(e -> {
             viewManagerModel.setState(homepageView.getViewName());
             viewManagerModel.firePropertyChange();
+        });
+
+        watchlistView.setDetailsClickListener(movieId -> {
+            if (clickingController != null) {
+                clickingController.onClick(movieId);
+            } else {
+                System.err.println("ClickingController not initialized! Make sure addClickingUseCase() is called before addWatchlistView()");
+            }
         });
 
         return this;
@@ -261,7 +270,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(clickingView.getViewName());
+                viewManagerModel.setState(homepageView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });
