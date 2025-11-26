@@ -9,12 +9,4 @@ public class BrowseViewModel extends ViewModel<BrowseState> {
         setState(new BrowseState());
 
     }
-
-public class BrowseViewModel extends ViewModel<BrowseState> {
-
-    public BrowseViewModel() {
-        super("browseView");
-        setState(new BrowseState());
-
-    }
 }
