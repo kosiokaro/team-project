@@ -55,11 +55,4 @@ public class BrowseOutputData {
     public int getPageNumber() {
         return pageNumber;
     }
-    public int getCurrentPageNumber() {return currentPageNumber;}
-    public List<String> getTitles() {return titles;}
-    public List<String> getImages() {return images;}
-    public List<Integer> getReferenceNumbers() {return referenceNumbers;}
-    public List<Integer> getRunTimes() {return runTimes;}
-    public List<int[]> getGenreIDS() {return genreIDS;}
-
 }
