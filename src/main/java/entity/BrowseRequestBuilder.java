@@ -17,9 +17,9 @@ public class BrowseRequestBuilder {
         this.setPageNumber("1");
     }
 
-    public BrowseRequestBuilder(String[] MovieIDS){
+    public BrowseRequestBuilder(int MovieID){
         this.request = new StringBuilder();
-        //TODO implement to get movie runtimes and genres
+        this.request.append("https://api.themoviedb.org/3/movie/").append(MovieID).append("?language=en-US");
     }
 
 

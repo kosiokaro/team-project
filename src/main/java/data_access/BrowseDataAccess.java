@@ -1,5 +1,6 @@
 package data_access;
 
+import com.google.gson.JsonObject;
 import entity.BrowsePage;
 import entity.BrowseRequestBuilder;
 import entity.Movie;
@@ -9,12 +10,18 @@ import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
+    private final String API_KEY;
 
-    private static final String STATUS_CODE = "status_code";
-    private static final int SUCCESS_CODE = 200;
+
+    public BrowseDataAccess(){
+        this.API_KEY = null;
+    }
 
     @Override
     public BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder) {
@@ -24,42 +31,76 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
                 .url(browseRequestBuilder.getRequest())
                 .get()
                 .addHeader("accept", "application/json")
-                .addHeader("Authorization","")
+                .addHeader("Authorization",API_KEY)
                 .build();
 
         try{
             final Response response = client.newCall(request).execute();
-            final JSONObject responseBody = new JSONObject(response.body().string());
-            return makeBrowsePage(responseBody);
-            //TODO make another API call to get runtimes
+            if(response.isSuccessful()){
+                final JSONObject responseBody = new JSONObject(response.body().string());
+
+                List<JSONObject> missingDataResponses = new ArrayList<>();
+                Request[] requests = makeMovieIdRequests(responseBody);
+                for(Request req: requests){
+                    Response resp = client.newCall(req).execute();
+                    if(resp.isSuccessful()){
+                        JSONObject body = new JSONObject(resp.body().string());
+                        missingDataResponses.add(body);
+                    }
+                    Thread.sleep(50);
+                }
+                return makeBrowsePage(responseBody,missingDataResponses);
+            }
         } catch (Exception e) {
             Movie[] movies = {};
             return new BrowsePage(movies,e);
         }
+        return null;
+    }
+
+    // Make a new request to retrieve the Movie runtimes and Genres
+    public Request[] makeMovieIdRequests(JSONObject jsonObject) {
+        JSONArray results = jsonObject.getJSONArray("results");
+        Request[] idRequests = new Request[results.length()];
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject o = results.getJSONObject(i);
+            int referenceNumber = o.optInt("id", 10000);
+            idRequests[i] = new Request.Builder()
+                    .url(new BrowseRequestBuilder(referenceNumber).getRequest())
+                    .get()
+                    .addHeader("accept", "application/json")
+                    .addHeader("Authorization",API_KEY)
+                    .build();
+        }
+        return idRequests;
 
     }
 
-    @Override
-    public BrowsePage makeBrowsePage(JSONObject jsonObject) {
+
+    public BrowsePage makeBrowsePage(JSONObject jsonObject,List<JSONObject> jsonObject2) {
         JSONArray results = jsonObject.getJSONArray("results");
         Movie[] movies = new Movie[results.length()];
-
+        String[] genreNames = null;
         for (int i = 0; i < results.length(); i++) {
+            JSONObject fullMovie = jsonObject2.get(i);
             JSONObject o = results.getJSONObject(i);
 
             String title = o.optString("title", "");
             int referenceNumber = o.optInt("id", -1);
-
-            JSONArray genreArray = o.optJSONArray("genre_ids");
-            int[] genreIDs = new int[genreArray != null ? genreArray.length() : 0];
-            for (int j = 0; j < genreIDs.length; j++) {
-                genreIDs[j] = genreArray.getInt(j);
+            JSONArray genreObjArray = fullMovie.optJSONArray("genres");
+            if (genreObjArray != null) {
+                genreNames = new String[genreObjArray.length()];
+                for (int j = 0; j < genreNames.length; j++) {
+                    JSONObject g = genreObjArray.getJSONObject(j);
+                    genreNames[j] = g.optString("name", "");
+                }
             }
+
 
             String overview = o.optString("overview", "");
             double rating = o.optDouble("vote_average", 0.0);
             String releaseDate = o.optString("release_date", "");
-            int runtime = 0;
+            int runtime = fullMovie.optInt("runtime", 0);
 
             String posterUrl = o.optString("poster_path", null);
             if (posterUrl != null) {
@@ -71,7 +112,7 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
             movies[i] = new Movie(
                     title,
                     referenceNumber,
-                    genreIDs,
+                    genreNames,
                     overview,
                     rating,
                     releaseDate,
@@ -85,5 +126,8 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
         return new BrowsePage(movies,jsonObject.getInt("page"));
 
     }
+
+
+
 
 }

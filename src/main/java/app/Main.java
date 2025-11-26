@@ -13,6 +13,7 @@ public class Main {
                 .addFavoritesView()
                 .addRateAndCommentView()
                 .addClickingView()
+                .addBrowseView()
                 .addClickingUseCase()
                 .addRandCView()
                 .addBrowseView()
@@ -21,6 +22,7 @@ public class Main {
                 .addSignupUseCase()
                 .addCommentUseCase()
                 .addClickingUseCase()
+                .addBrowseUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);
