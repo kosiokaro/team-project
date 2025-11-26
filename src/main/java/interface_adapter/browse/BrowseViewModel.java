@@ -9,4 +9,5 @@ public class BrowseViewModel extends ViewModel<BrowseState> {
         setState(new BrowseState());
 
     }
+
 }

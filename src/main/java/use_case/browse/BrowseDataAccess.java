@@ -10,6 +10,4 @@ public interface BrowseDataAccess {
 
     BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder);
 
-    BrowsePage makeBrowsePage(JSONObject jsonObject);
-
 }
