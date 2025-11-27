@@ -14,7 +14,7 @@ public class BrowseInputData {
     public boolean isReferenceLookUp = false;
 
 
-    public BrowseInputData(String year, String title, String pageNumber) {
+    public BrowseInputData(String year, String title, String pageNumber, boolean sortAscending, boolean sortDescending) {
 
         this.year = year;
         this.title = title;

@@ -19,9 +19,10 @@ public class BrowsePresenter implements BrowseOutputBoundary {
 
     @Override
     public void populateView(BrowseOutputData browseOutputData) {
+        System.out.println("Reached Presenter");
         final BrowseState browseState = browseViewModel.getState();
         browseState.setMovies(browseOutputData.getMovies());
-        browseViewModel.firePropertyChange();
+        this.browseViewModel.firePropertyChange();
 
     }
 

@@ -9,25 +9,82 @@ public class BrowseState {
 
     private int currentPageNumber;
     private List<List<BrowseOutputData.MovieCardData>> movieCards;
+    private SearchTabState searchState;
 
+    public class SearchTabState{
+        private String query;
+        private String year;
+        private Boolean sortAscending;
+        private Boolean sortDescending;
+        private int pageNumber;
 
-    public BrowseState() {
-        movieCards = new ArrayList<>();
-        this.currentPageNumber = 1;
+        public SearchTabState(){
+            query = "";
+            year = "";
+            sortAscending = true;
+            sortDescending = false;
+            pageNumber = 1;
+        }
+        public String getQuery() {
+            return query;
+        }
+        public void setQuery(String query) {this.query  = query;}
+        public String getYear() {return year;}
+        public void setYear(String year) {this.year = year;}
+        public Boolean SortAscending() {return sortAscending;}
+        public Boolean SortDescending() {return sortDescending;}
+        public void setSortAscending(){
+            this.sortAscending = true;
+            this.sortDescending = false;
+        }
+        public void setSortDescending(){
+            this.sortAscending = false;
+            this.sortDescending = true;
+        }
+        public void incrementPage(){
+            this.pageNumber++;
+        }
+        public String getPageNumber(){
+            return ""+this.pageNumber;
+        }
+
     }
 
+    public BrowseState() {
+        this.searchState = new SearchTabState();
+        movieCards = new ArrayList<>();
+        this.currentPageNumber = 1;
+
+    }
+
+    public void ClearSearch(){
+        this.searchState = new SearchTabState();
+    }
+
+    public SearchTabState getSearchState() {
+        return searchState;
+    }
+
+
+
     public List<BrowseOutputData.MovieCardData> getMovies(int page) {
-        return movieCards.get(page);
+        return movieCards.get(page-1);
     }
 
     public void setMovies(List<BrowseOutputData.MovieCardData> m) {
         movieCards.add(m);
     }
 
+    public void resetCurrentPage(){
+        this.currentPageNumber = 1;
+        searchState.pageNumber = 1;
+    }
     public int getCurrentPageNumber() {
         return currentPageNumber;
     }
-    public void setCurrentPageNumber(int currentPageNumber) {
-        this.currentPageNumber = currentPageNumber;
+    public void incrementPage() {
+        this.currentPageNumber++;
+        searchState.incrementPage();
+
     }
 }

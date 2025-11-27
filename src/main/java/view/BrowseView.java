@@ -11,11 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
+import java.util.List;
 
 public class BrowseView extends JPanel  implements PropertyChangeListener, ActionListener {
     public static final Color TOPBAR_BACKGROUND_COLOR = new Color(50, 50, 50);
     public static final Color BACKGROUND_COLOR = new Color(3, 9, 78);
     public static final Color MOVIE_GRID_BACKGROUND_COLOR = new Color(40, 40, 40);
+    public static final Color SEARCH_LABEL_COLOR = new Color(0, 0, 0, 68);
 
     public final String viewName = "BROWSE";
     private final JButton browseButton = new JButton("Browse");
@@ -24,18 +27,21 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
             "Rating ↑ (Ascending)",
             "Rating ↓ (Descending)"
     });
+    private final JButton loadMoreButton = new JButton("Load More");
+
 
     private final JComboBox<String> yearBox = new JComboBox<>();
 
     private final JPanel gridPanel = new JPanel();
 
-    private BrowseController controller;
     private final BrowseViewModel viewModel;
     private BrowseController browseController = null;
 
 
     public BrowseView(BrowseViewModel viewModel) {
+
         this.viewModel = viewModel;
+        viewModel.addPropertyChangeListener(this);
         createUIComponents();
     }
 
@@ -47,13 +53,20 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         topBar.setLayout(new FlowLayout(FlowLayout.LEFT));
         topBar.setBackground(TOPBAR_BACKGROUND_COLOR);
 
-        topBar.add(new JLabel("Search:"));
+        JLabel SEARCH_LABEL = new JLabel("Search:");
+        SEARCH_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(SEARCH_LABEL);
+
         topBar.add(searchField);
 
-        topBar.add(new JLabel("Sort By:"));
+        JLabel SORT_BY_LABEL = new JLabel("Sort By:");
+        SORT_BY_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(SORT_BY_LABEL);
         topBar.add(sortBox);
 
-        topBar.add(new JLabel("Year:"));
+        JLabel YEAR_LABEL = new JLabel("Year:");
+        YEAR_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(YEAR_LABEL);
         yearBox.addItem("Any");
         for (int y = 2025; y >= 1950; y--) {
             yearBox.addItem(String.valueOf(y));
@@ -70,41 +83,62 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         add(scrollPane, BorderLayout.CENTER);
 
-        displayMovies();
 
-
-
+        add(loadMoreButton, BorderLayout.SOUTH);
+        yearBox.addActionListener(this);
+        loadMoreButton.addActionListener(this);
+        searchField.addActionListener(this);
+        sortBox.addActionListener(this);
+        browseButton.addActionListener(this);
 
     }
 
-    public void displayMovies() {
+    public void ClearPage(){
         gridPanel.removeAll();
+    }
 
-        for (int i = 0; i < 20; i++) {
-            gridPanel.add(createMovieCard());
+    public void displayMovies(List<BrowseOutputData.MovieCardData> movies) {
+
+        for (int i = 0; i < movies.toArray().length; i++) {
+            gridPanel.add(createMovieCard(movies.get(i)));
+
         }
 
         gridPanel.revalidate();
         gridPanel.repaint();
     }
 
-    private JPanel createMovieCard() {
+    private JPanel createMovieCard(BrowseOutputData.MovieCardData movie) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(60, 60, 60));
         card.setPreferredSize(new Dimension(150, 250));
 
-        JLabel poster = new JLabel("<Poster>");
-        poster.setPreferredSize(new Dimension(120, 160));
-        poster.setOpaque(true);
-        poster.setBackground(Color.GRAY);
+        JLabel title = new JLabel(movie.title);
+        JLabel rating = new JLabel("★ " + movie.rating);
+        JLabel runtime = new JLabel(movie.runtime+ " min");
+        JLabel genres = new JLabel(movie.genres);
 
-        JLabel title = new JLabel("m.title");
-        JLabel rating = new JLabel("★ " + "m.rating");
-        JLabel runtime = new JLabel("m.runtime" + " min");
-        JLabel genres = new JLabel("m.genres");
+        try {
+            URL url = new URL(movie.posterURL);
+            ImageIcon icon = new ImageIcon(url);
 
-        card.add(poster);
+            // Optional: scale the image to fit the label size
+            Image scaled = icon.getImage().getScaledInstance(120, 160, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(scaled);
+
+            JLabel poster = new JLabel(icon);
+            poster.setPreferredSize(new Dimension(120, 160));
+            card.add(poster);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JLabel poster = new JLabel("Poster");
+        }
+
+
+
+
         card.add(title);
         card.add(rating);
         card.add(runtime);
@@ -119,14 +153,67 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("populating page");
+        final BrowseState browseState = (BrowseState) evt.getNewValue();
+        populatePage(browseState);
+
 
     }
+
+    public void populatePage(BrowseState state){
+        displayMovies(state.getMovies(state.getCurrentPageNumber()));
+    }
+
 
     public void setBrowseController(BrowseController browseController) {this.browseController=browseController;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        final BrowseState browseState = viewModel.getState();
+        if(e.getSource() == browseButton || e.getSource() == loadMoreButton ) {
+            if(e.getSource() == loadMoreButton){
+                browseState.incrementPage();
+            if(e.getSource() == browseButton){
+                ClearPage();
+                browseState.resetCurrentPage();
+
+            }
+            }
+            browseController.executeQuery(
+                    browseState.getSearchState().getYear(),
+                    browseState.getSearchState().getQuery(),
+                    browseState.getSearchState().getPageNumber(),
+                    browseState.getSearchState().SortAscending(),
+                    browseState.getSearchState().SortDescending()
+            );
+        }
+        else if(e.getSource() == sortBox) {
+            if (sortBox.getSelectedIndex() == 0) {
+                browseState.getSearchState().setSortAscending();
+
+            }
+            else if (sortBox.getSelectedIndex() == 1) {
+                browseState.getSearchState().setSortDescending();
+            }
+
+        }
+        else if(e.getSource() == searchField) {
+            browseState.getSearchState().setQuery(searchField.getText());
+            System.out.println(browseState.getSearchState().getQuery());
+
+        }
+        else if(e.getSource() == yearBox) {
+            if(yearBox.getSelectedItem().toString() != "Any"){
+                browseState.getSearchState().setYear(yearBox.getSelectedItem().toString());
+            }
+            System.out.println(browseState.getSearchState().getYear());
+        }
 
     }
+
+
+
+
 }
+

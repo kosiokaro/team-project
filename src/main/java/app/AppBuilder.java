@@ -89,6 +89,7 @@ public class AppBuilder {
         commentViewModel = new CommentViewModel();
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
+        browseViewModel = new BrowseViewModel();
     }
 
     public AppBuilder addSignUpView() {
