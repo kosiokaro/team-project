@@ -7,6 +7,8 @@ import entity.User;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.rate_and_comment.CommentUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
+import use_case.watchlist.addToWatchList.AddToWatchListDataAccessInterface;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListDataAccessInterface;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,7 +24,7 @@ import java.util.Map;
  * 使用索引文件加速用户名和 accountID 查找
  */
 public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
-        SignupUserDataAccessInterface, LoginUserDataAccessInterface {
+        SignupUserDataAccessInterface, LoginUserDataAccessInterface, AddToWatchListDataAccessInterface, DeleteFromWatchListDataAccessInterface {
 
     private final String userDataDir = "src/main/java/userdata/users/";
     private final String indexFilePath = "src/main/java/userdata/index.json";
@@ -169,21 +171,21 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
 
     // ==================== 观看列表管理 ====================
 
-    public void addToWatchlist(String username, Media movie) {
+    public void addMovieToWatchlist(String username, int refNumber) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-        user.addWatchlist(movie.getReferenceNumber());
+        user.addWatchlist(refNumber);
         writeUserFile(user);
     }
 
-    public void deleteFromWatchlist(String username, Media movie) {
+    public void deleteFromWatchlist(String username, int refNumber) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-        user.removeWatchList(movie.getReferenceNumber());
+        user.removeWatchList(refNumber);
         writeUserFile(user);
     }
 
