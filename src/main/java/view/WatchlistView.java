@@ -6,10 +6,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import entity.Movie;
 
-public class WatchlistView extends JPanel {
+import interface_adapter.watchlist.LoadWatchListController;
+import interface_adapter.watchlist.WatchListController;
+
+public class WatchlistView extends JPanel implements PropertyChangeListener {
+    private WatchListController controller;
+    private LoadWatchListController loadController;
+    private String currentUsername;
+
     public final String viewName = "WATCHLIST";
     private JLabel titleLabel;
     private JButton switchButton;
@@ -29,9 +38,10 @@ public class WatchlistView extends JPanel {
     private List<MediaCardData> allMediaData;
     private java.util.function.Consumer<Integer> detailsClickListener;
 
-    public WatchlistView() {
+
+    public WatchlistView(){
         this.setLayout(new BorderLayout());
-        this.allMediaData = new ArrayList<>();  // Initialize the list!
+        this.allMediaData = new ArrayList<>();
 
         titleLabel = new JLabel("My Watchlist", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 24));
@@ -64,9 +74,59 @@ public class WatchlistView extends JPanel {
         buttonPanel.add(homeButton);
 
         this.add(buttonPanel, BorderLayout.SOUTH);
+    }
 
-        // Add some test data
-        populateTestData();
+    public void setLoadController(LoadWatchListController controller) {
+        this.loadController = controller;
+    }
+
+    public void loadUserWatchlist() {
+        if (loadController != null && currentUsername != null) {
+            loadController.loadWatchlist(currentUsername);
+        } else {
+            System.err.println("LoadController not set or no username!");
+        }
+    }
+
+    public void loadWatchlist(List<Movie> movies) {
+        clearAllMedia();
+        for (Movie movie : movies) {
+            ArrayList<String> genres = new ArrayList<>();
+            if (movie.getGenres() != null) {
+                for (String genre : movie.getGenres()) {
+                    genres.add(genre);
+                }
+            }
+
+            addMediaCard(
+                    movie.getTitle(),
+                    movie.getReferenceNumber(),
+                    genres,
+                    movie.getOverview(),
+                    movie.getRating()
+            );
+        }
+    }
+
+    public void setController(WatchListController controller) {
+        this.controller = controller;
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("state".equals(evt.getPropertyName())) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Movie> movies = (ArrayList<Movie>) evt.getNewValue();
+            loadWatchlist(movies);
+        } else if ("message".equals(evt.getPropertyName())) {
+            String message = (String) evt.getNewValue();
+            if (message != null) {
+                JOptionPane.showMessageDialog(this, message);
+            }
+        }
     }
 
     private void createFilterPanel() {
@@ -225,6 +285,14 @@ public class WatchlistView extends JPanel {
 
         JButton removeButton = new JButton("Remove");
         removeButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        removeButton.addActionListener(e -> {
+            if (controller != null && currentUsername != null) {
+                controller.removeFromWatchList(currentUsername, String.valueOf(id));
+                // Remove from UI
+                allMediaData.removeIf(data -> data.id == id);
+                filterByGenre();
+            }
+        });
 
         JButton detailsButton = new JButton("Details");
         detailsButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
@@ -240,28 +308,6 @@ public class WatchlistView extends JPanel {
         row.add(detailsPanel, BorderLayout.CENTER);
 
         return row;
-    }
-
-    private void populateTestData() {
-        addMediaCard("Inception", 1,
-                List.of("Action", "Science Fiction", "Thriller"),
-                "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-                8.8);
-
-        addMediaCard("The Dark Knight", 2,
-                List.of("Action", "Crime", "Drama"),
-                "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-                9.0);
-
-        addMediaCard("Interstellar", 3,
-                List.of("Adventure", "Drama", "Science Fiction"),
-                "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-                8.6);
-
-        addMediaCard("The Notebook", 4,
-                List.of("Romance", "Drama"),
-                "A poor yet passionate young man falls in love with a rich young woman, giving her a sense of freedom, but they are soon separated because of their social differences.",
-                7.8);
     }
 
     /**

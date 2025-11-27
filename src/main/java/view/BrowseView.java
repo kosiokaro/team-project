@@ -3,6 +3,7 @@ package view;
 import interface_adapter.browse.BrowseController;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
+import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.util.List;
 
 public class BrowseView extends JPanel  implements PropertyChangeListener, ActionListener {
+    private WatchListController watchListController;
     public static final Color TOPBAR_BACKGROUND_COLOR = new Color(50, 50, 50);
     public static final Color BACKGROUND_COLOR = new Color(3, 9, 78);
     public static final Color MOVIE_GRID_BACKGROUND_COLOR = new Color(40, 40, 40);
@@ -108,6 +110,10 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         gridPanel.repaint();
     }
 
+    public void setWatchListController(WatchListController controller) {
+        this.watchListController = controller;
+    }
+
     private JPanel createMovieCard(BrowseOutputData.MovieCardData movie) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -143,6 +149,19 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         card.add(rating);
         card.add(runtime);
         card.add(genres);
+
+        // ADD TO WATCHLIST BUTTON
+        JButton addToWatchlistBtn = new JButton("+ Watchlist");
+        addToWatchlistBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addToWatchlistBtn.setMaximumSize(new Dimension(120, 25));
+        addToWatchlistBtn.addActionListener(e -> {
+            if (watchListController != null) {
+                watchListController.addToWatchList("testuser", String.valueOf(movie.getMovieID()));
+                JOptionPane.showMessageDialog(this, "Added \"" + movie.title + "\" to watchlist!");
+            }
+        });
+        card.add(Box.createVerticalStrut(5));
+        card.add(addToWatchlistBtn);
 
         return card;
     }

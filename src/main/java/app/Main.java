@@ -23,6 +23,8 @@ public class Main {
                 .addCommentUseCase()
                 .addClickingUseCase()
                 .addBrowseUseCase()
+                .addLoadWatchListUseCase()
+                .addWatchListUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

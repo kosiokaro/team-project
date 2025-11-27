@@ -19,6 +19,30 @@ public class Movie extends Media {
 
     }
 
+    public String[] getGenres() {
+        return genreNames;
+    }
+
+    public String getTitle() {
+        return overview;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
     public String toString() {
         return "Movie{" +
                 "title='" + title + '\'' +
