@@ -179,12 +179,12 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         writeUserFile(user);
     }
 
-    public void deleteFromWatchlist(String username, Media movie) {
+    public void deleteFromWatchlist(String username, int refNumber) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-        user.removeWatchList(movie.getReferenceNumber());
+        user.removeWatchList(refNumber);
         writeUserFile(user);
     }
 
