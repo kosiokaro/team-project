@@ -5,7 +5,6 @@ import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
-import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 
 import javax.swing.*;
@@ -15,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -59,7 +57,7 @@ public class RandCSuccessSubmitView extends JPanel implements PropertyChangeList
         cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
         cardPanel.setBackground(CARD_BG);
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+                BorderFactory.createLineBorder(new Color(45, 55, 72), 1),
                 new EmptyBorder(40, 50, 40, 50)
         ));
         cardPanel.setPreferredSize(new Dimension(500, 400));

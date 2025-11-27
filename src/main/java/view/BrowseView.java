@@ -18,8 +18,6 @@ import java.net.URL;
 import java.util.List;
 
 public class BrowseView extends JPanel implements PropertyChangeListener, ActionListener {
-
-    // Modern color palette matching homepage
     private static final Color PRIMARY_COLOR = new Color(99, 102, 241);
     private static final Color SECONDARY_COLOR = new Color(139, 92, 246);
     private static final Color BACKGROUND_COLOR = new Color(17, 24, 39);
