@@ -11,5 +11,5 @@ public interface AddToWatchListDataAccessInterface {
 
 
     List<Integer> getWatchlist(String username);
-    void updateWatchlist(String username, List<Integer> watchlist);
+//    void updateWatchlist(String username, List<Integer> watchlist);
 }
