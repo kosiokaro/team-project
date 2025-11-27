@@ -8,6 +8,7 @@ import use_case.login.LoginUserDataAccessInterface;
 import use_case.rate_and_comment.CommentUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
 import use_case.watchlist.addToWatchList.AddToWatchListDataAccessInterface;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListDataAccessInterface;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,7 +24,7 @@ import java.util.Map;
  * 使用索引文件加速用户名和 accountID 查找
  */
 public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
-        SignupUserDataAccessInterface, LoginUserDataAccessInterface, AddToWatchListDataAccessInterface{
+        SignupUserDataAccessInterface, LoginUserDataAccessInterface, AddToWatchListDataAccessInterface, DeleteFromWatchListDataAccessInterface {
 
     private final String userDataDir = "src/main/java/userdata/users/";
     private final String indexFilePath = "src/main/java/userdata/index.json";
