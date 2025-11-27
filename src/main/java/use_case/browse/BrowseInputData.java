@@ -19,8 +19,8 @@ public class BrowseInputData {
         this.year = year;
         this.title = title;
         this.pageNumber = pageNumber;
-        this.sortAscending = false;
-        this.sortDescending = false;
+        this.sortAscending = sortAscending;
+        this.sortDescending = sortDescending;
         this.isQuery = true;
         this.isReferenceLookUp = false;
     }
@@ -30,6 +30,7 @@ public class BrowseInputData {
         this.isQuery = false;
         this.isReferenceLookUp = true;
     }
+
 
 
 

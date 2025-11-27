@@ -237,7 +237,7 @@ public class AppBuilder {
 
     public AppBuilder addHomepageView() {
 
-        homepageView = new HomepageView(homeViewModel);
+        homepageView = new HomepageView(homeViewModel, viewManagerModel);
         cardPanel.add(homepageView, homepageView.getViewName());
 
         // Use the actual getViewName() for the two existing views.
@@ -263,14 +263,13 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseUseCase(){
-        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel);
+        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
         final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browseOutputBoundary);
 
         BrowseController browseController = new BrowseController(browseInputBoundary);
         browseView.setBrowseController(browseController);
         return this;
     }
-
 
     public AppBuilder addSignupUseCase(){
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,

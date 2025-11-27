@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeListener;
 public class HomepageView extends JPanel implements PropertyChangeListener {
     public final String viewName = "HOMEPAGE";
     private HomeViewModel homeViewModel;
+    private ViewManagerModel viewManagerModel;
     private String username;
     private JLabel titleLabel;
     private JLabel welcomeLabel;
@@ -32,8 +34,9 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
     private static final Color TEXT_COLOR = new Color(243, 244, 246);
     private static final Color ACCENT_COLOR = new Color(147, 51, 234);
 
-    public HomepageView(HomeViewModel homeViewModel) {
+    public HomepageView(HomeViewModel homeViewModel, ViewManagerModel viewManagerModel) {
         this.homeViewModel = homeViewModel;
+        this.viewManagerModel = viewManagerModel;
         homeViewModel.addPropertyChangeListener(this);
 
         this.setLayout(new BorderLayout());
@@ -74,6 +77,14 @@ public class HomepageView extends JPanel implements PropertyChangeListener {
 
         logoutButton = createStyledButton("Logout", new Color(239, 68, 68), new Color(220, 38, 38));
         logoutButton.setPreferredSize(new Dimension(100, 35));
+        logoutButton.addActionListener(evt -> {
+            if (evt.getSource().equals(logoutButton)) {
+                homeViewModel.setState(new HomeState());
+                username = "";
+                viewManagerModel.setState("log in");
+                viewManagerModel.firePropertyChange();
+            }
+        });
         welcomePanel.add(logoutButton, BorderLayout.EAST);
 
         topPanel.add(welcomePanel, BorderLayout.SOUTH);

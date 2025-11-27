@@ -12,6 +12,7 @@ public class BrowseOutputData {
     private final List<MovieCardData> movies = new ArrayList<>();
     private int pageNumber;
 
+
     public BrowseOutputData(BrowsePage browsePage) {
         for (Movie movie : browsePage.getMovies()) {
             movies.add(new MovieCardData(
@@ -24,6 +25,11 @@ public class BrowseOutputData {
             ));
         }
         pageNumber = browsePage.getPageNumber();
+    }
+
+    public BrowseOutputData(int referenceNumber) {
+        MovieCardData movieCardData = new MovieCardData("",0,0,"","",referenceNumber);
+        movies.add(movieCardData);
     }
 
     public static class MovieCardData {
