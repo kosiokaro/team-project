@@ -1,46 +1,56 @@
 package entity;
 
+import java.util.ArrayList;
+
 public class User implements FavoriteList, Watchlist {
     private String username;
     private String password;
     private final int accountID;
-    private final Media[] favorites;
-    private final Media[] watchlist;
+    private final ArrayList<Integer> favorites;
+    private final ArrayList<Integer> watchlist;
+    private ArrayList<Comment> comments = new ArrayList<>();
 
-    public User(String username, String password, int accountID, Media[] favorites, Media[] watchlist) {
+    public User(String username, String password, int accountID) {
         this.username = username;
         this.password = password;
         this.accountID = accountID;
-        this.favorites = favorites;
-        this.watchlist = watchlist;
+        this.favorites = new ArrayList<>();
+        this.watchlist =new ArrayList<>();
     }
 
     public String getUsername() {return username;}
     public String getPassword() {return password;}
     public int getAccountID() {return accountID;}
-    public Media[] getFavorites() {return favorites;}
-    public Media[] getWatchlist() {return watchlist;}
+    public ArrayList<Integer> getFavorites() {return favorites;}
+    public ArrayList<Integer> getWatchlist() {return watchlist;}
+    public ArrayList<Comment> getComments() {return comments;}
 
     @Override
-    public void addFavorite(Media media) {
-        // TODO document why this method is empty
+    public void addFavorite(int refnumber) {
+        favorites.add(refnumber);
     }
 
     @Override
-    public void removeFavorite(Media media) {
-        // TODO document why this method is empty
-
+    public void removeFavorite(int refnumber) {
+        favorites.remove(refnumber);
     }
 
     @Override
-    public void addWatchlist(Media media) {
-        // TODO document why this method is empty
-
+    public void addWatchlist(int refnumber) {
+        watchlist.add(refnumber);
     }
 
     @Override
-    public void removeWatchList(Media media) {
-        // TODO document why this method is empty
-
+    public void removeWatchList(int refnumber) {
+        watchlist.remove(refnumber);
     }
+
+
+    public void addcomment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void setPassword(String password) {this.password = password;}
+
+
 }
