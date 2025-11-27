@@ -212,7 +212,7 @@ public class AppBuilder {
 
     public AppBuilder addHomepageView() {
 
-        homepageView = new HomepageView(homeViewModel);
+        homepageView = new HomepageView(homeViewModel, viewManagerModel);
         cardPanel.add(homepageView, homepageView.getViewName());
 
         // Use the actual getViewName() for the two existing views.
