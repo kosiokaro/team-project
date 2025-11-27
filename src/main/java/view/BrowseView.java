@@ -23,7 +23,8 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
     public static final Color MOVIE_GRID_BACKGROUND_COLOR = new Color(40, 40, 40);
     public static final Color SEARCH_LABEL_COLOR = new Color(0, 255, 129, 255);
 
-    private final JButton browseButton = new JButton("Browse");
+    private final JButton browseButton = new JButton("Search");
+    private final JButton homepageButton = new JButton("Home");
     private final JTextField searchField = new JTextField(20);
     private final JComboBox<String> sortBox = new JComboBox<>(new String[]{
             "Rating ↑ (Ascending)",
@@ -231,5 +232,7 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
 
     }
 
+    public void setHomeButtonListener(ActionListener listener) {
+        homepageButton.addActionListener(listener);
+    }
 }
-
