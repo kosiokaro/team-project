@@ -218,7 +218,8 @@ public class AppBuilder {
         // For browse: you said it's "in progress" so either add a browse view
         // or use homepageView.getViewName() as a placeholder.
         homepageView.setBrowseButtonListener(e -> {
-            viewManagerModel.setState("BROWSE");
+            viewManagerModel.setState(browseView.getViewName());
+            viewManagerModel.firePropertyChange();
         });
 
         // These two will use the actual view names (safer than hard-coded strings)
