@@ -363,7 +363,7 @@ public class AppBuilder {
 
         application.add(cardPanel);
 
-        application.setSize(800, 600);
+        application.setSize(1200, 1000);
         application.setLocationRelativeTo(null);
 
 
