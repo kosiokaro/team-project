@@ -20,16 +20,19 @@ public class BrowseInteractor implements BrowseInputBoundary {
         if(browseInputData.isQuery){
             if(browseInputData.title.isEmpty()){
                 if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
-                else if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
-                else if(browseInputData.sortAscending){builder.sortByRatingAsc();}
-                else if(browseInputData.sortDescending){builder.sortByRatingDesc();}
+                if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
+
+                if(browseInputData.sortAscending){builder.sortByRatingAsc();
+                    System.out.println("Sort by Ascending");}
+                if(browseInputData.sortDescending){builder.sortByRatingDesc();}
 
             } else {
                 builder = new BrowseRequestBuilder(browseInputData.title);
                 if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
-                else if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
-                else if(browseInputData.sortAscending){builder.sortByRatingAsc();}
-                else if(browseInputData.sortDescending){builder.sortByRatingDesc();}
+                if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
+
+                if(browseInputData.sortAscending){builder.sortByRatingAsc();}
+                if(browseInputData.sortDescending){builder.sortByRatingDesc();}
             }
         }
 
@@ -42,7 +45,8 @@ public class BrowseInteractor implements BrowseInputBoundary {
 
     @Override
     public void selectMovie(BrowseInputData browseInputData) {
-
+        BrowseOutputData browseOutputData =  new BrowseOutputData(browseInputData.referenceNumber);
+        this.browsePresenter.prepareSelectMovieView(browseOutputData);
     }
 
     @Override
@@ -52,6 +56,8 @@ public class BrowseInteractor implements BrowseInputBoundary {
 
     @Override
     public void addToWatchlist(BrowseInputData browseInputData) {
+
+
         //TODO: Implement
 
     }

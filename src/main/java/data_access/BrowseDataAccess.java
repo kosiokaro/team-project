@@ -26,7 +26,7 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
     @Override
     public BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder) {
         OkHttpClient client = new OkHttpClient();
-
+        System.out.println(browseRequestBuilder.getRequest());
         Request request = new Request.Builder()
                 .url(browseRequestBuilder.getRequest())
                 .get()
@@ -60,6 +60,7 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
 
     // Make a new request to retrieve the Movie runtimes and Genres
     public Request[] makeMovieIdRequests(JSONObject jsonObject) {
+
         JSONArray results = jsonObject.getJSONArray("results");
         Request[] idRequests = new Request[results.length()];
         for (int i = 0; i < results.length(); i++) {
