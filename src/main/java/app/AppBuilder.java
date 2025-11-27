@@ -238,7 +238,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseUseCase(){
-        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel);
+        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
         final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browseOutputBoundary);
 
         BrowseController browseController = new BrowseController(browseInputBoundary);

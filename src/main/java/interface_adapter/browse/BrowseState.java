@@ -41,9 +41,6 @@ public class BrowseState {
             this.sortAscending = false;
             this.sortDescending = true;
         }
-        public void incrementPage(){
-            this.pageNumber++;
-        }
         public String getPageNumber(){
             return ""+this.pageNumber;
         }
@@ -77,14 +74,13 @@ public class BrowseState {
 
     public void resetCurrentPage(){
         this.currentPageNumber = 1;
-        searchState.pageNumber = 1;
+        movieCards.clear();
     }
+
     public int getCurrentPageNumber() {
         return currentPageNumber;
     }
     public void incrementPage() {
         this.currentPageNumber++;
-        searchState.incrementPage();
-
     }
 }

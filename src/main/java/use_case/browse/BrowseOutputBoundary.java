@@ -6,6 +6,6 @@ public interface BrowseOutputBoundary {
 
     void prepareError(BrowseOutputData browseOutputData);
 
-    void prepareSelectMovieView();
+    void prepareSelectMovieView(BrowseOutputData browseOutputData);
 
 }
