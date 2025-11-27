@@ -30,7 +30,7 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     private JLabel genresLabel = new JLabel();
     private JButton rateButton = new JButton("⭐ Rate and Comment");
     private JButton backButton = new JButton("← Back");
-    private JButton exitButton = new JButton("✕");
+    private JButton exitButton = new JButton("×");
 
     private final String viewName = "clicking";
     private String previousViewName = "BROWSE";
@@ -241,9 +241,9 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         }
 
         titleLabel.setText(state.getTitle() != null ? state.getTitle() : "Unknown Title");
-        yearLabel.setText("Year: " + state.getYear());
-        ratingLabel.setText("Rating: " + state.getRating());
-        languageLabel.setText("Language: " + state.getLanguage());
+        yearLabel.setText( String.valueOf(state.getYear()));
+        ratingLabel.setText(String.valueOf( state.getRating()));
+        languageLabel.setText(state.getLanguage());
         overviewText.setText(state.getOverview());
 
         if (state.getGenres() != null && !state.getGenres().isEmpty()) {
