@@ -18,7 +18,7 @@ public class BrowseOutputData {
                     movie.title,
                     movie.rating,
                     movie.runtime,
-                    Arrays.toString(movie.genreIDs),
+                    Arrays.toString(movie.genreNames),
                     movie.posterUrl,
                     movie.getReferenceNumber()
             ));

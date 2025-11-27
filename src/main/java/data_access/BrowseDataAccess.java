@@ -122,7 +122,9 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
             );
         }
 
-
+        for (Movie movie : movies) {
+            System.out.println(movie.toString());
+        }
         return new BrowsePage(movies,jsonObject.getInt("page"));
 
     }

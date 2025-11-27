@@ -11,9 +11,15 @@ public class BrowseController {
 
     }
 
-    public void executeQuery(String year, String title, String pageNumber)
+    public void executeQuery(String year, String title, String pageNumber, boolean sortAscending, boolean sortDescending)
     {
-        BrowseInputData inputData = new BrowseInputData(year, title, pageNumber);
+        System.out.println(year);
+        System.out.println(title);
+        System.out.println(pageNumber);
+        System.out.println(sortAscending);
+        System.out.println(sortDescending);
+        System.out.println("Executing query");
+        BrowseInputData inputData = new BrowseInputData(year, title, pageNumber, sortAscending, sortDescending);
         this.browseUseCaseInteractor.execute(inputData);
 
     }
