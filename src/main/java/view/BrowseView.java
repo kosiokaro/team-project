@@ -1,94 +1,219 @@
 package view;
 
+import interface_adapter.browse.BrowseController;
+import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
+import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.net.URL;
+import java.util.List;
 
-public class BrowseView extends JPanel {
+public class BrowseView extends JPanel  implements PropertyChangeListener, ActionListener {
+    public static final Color TOPBAR_BACKGROUND_COLOR = new Color(50, 50, 50);
+    public static final Color BACKGROUND_COLOR = new Color(3, 9, 78);
+    public static final Color MOVIE_GRID_BACKGROUND_COLOR = new Color(40, 40, 40);
+    public static final Color SEARCH_LABEL_COLOR = new Color(0, 0, 0, 68);
+
     public final String viewName = "BROWSE";
-    private JTextField searchField;
-    private JButton searchButton;
-    private JComboBox searchTypeSelect;
+    private final JButton browseButton = new JButton("Browse");
+    private final JTextField searchField = new JTextField(20);
+    private final JComboBox<String> sortBox = new JComboBox<>(new String[]{
+            "Rating ↑ (Ascending)",
+            "Rating ↓ (Descending)"
+    });
+    private final JButton loadMoreButton = new JButton("Load More");
+
+
+    private final JComboBox<String> yearBox = new JComboBox<>();
+
+    private final JPanel gridPanel = new JPanel();
+
     private final BrowseViewModel viewModel;
+    private BrowseController browseController = null;
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("browse View");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(new BrowseView(new BrowseViewModel()));
-
-        frame.pack();
-        frame.setSize(400,400);
-
-        frame.setVisible(true);
-    }
 
     public BrowseView(BrowseViewModel viewModel) {
+
         this.viewModel = viewModel;
+        viewModel.addPropertyChangeListener(this);
         createUIComponents();
     }
 
     private void createUIComponents() {
+        setLayout(new BorderLayout());
+        setBackground(BACKGROUND_COLOR);
 
-        this.setLayout(new BorderLayout());
+        JPanel topBar = new JPanel();
+        topBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        topBar.setBackground(TOPBAR_BACKGROUND_COLOR);
 
-        JPanel searchPanel = new JPanel();
-        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
+        JLabel SEARCH_LABEL = new JLabel("Search:");
+        SEARCH_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(SEARCH_LABEL);
 
-        searchField = new JTextField();
-        searchButton = new JButton("Search");
-        searchTypeSelect = new JComboBox();
-        searchTypeSelect.setModel(new DefaultComboBoxModel(new String[] {"Movie", "Actor"}));
+        topBar.add(searchField);
 
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
-        searchPanel.add(searchTypeSelect);
+        JLabel SORT_BY_LABEL = new JLabel("Sort By:");
+        SORT_BY_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(SORT_BY_LABEL);
+        topBar.add(sortBox);
 
-
-        JPanel mediaDisplayPanel = new JPanel();
-        mediaDisplayPanel.setLayout(new GridLayout(0, 4, 10, 10));
-
-        for (int i = 0; i < 20; i++) { // Example: 20 movies
-            mediaDisplayPanel.add(createMovieItemPanel(
-                    "Movie Name " + i,
-                    "8.5",
-                    "120 min",
-                    "Action, Sci-Fi"
-            ));
+        JLabel YEAR_LABEL = new JLabel("Year:");
+        YEAR_LABEL.setForeground(SEARCH_LABEL_COLOR);
+        topBar.add(YEAR_LABEL);
+        yearBox.addItem("Any");
+        for (int y = 2025; y >= 1950; y--) {
+            yearBox.addItem(String.valueOf(y));
         }
+        topBar.add(yearBox);
+        topBar.add(browseButton);
 
-        JScrollPane scrollPane = new JScrollPane(mediaDisplayPanel);
+        add(topBar, BorderLayout.NORTH);
+
+        gridPanel.setLayout(new GridLayout(0, 4, 20, 20));
+        gridPanel.setBackground(MOVIE_GRID_BACKGROUND_COLOR);
+
+        JScrollPane scrollPane = new JScrollPane(gridPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        add(scrollPane, BorderLayout.CENTER);
 
 
-        this.add(searchPanel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
+        add(loadMoreButton, BorderLayout.SOUTH);
+        yearBox.addActionListener(this);
+        loadMoreButton.addActionListener(this);
+        searchField.addActionListener(this);
+        sortBox.addActionListener(this);
+        browseButton.addActionListener(this);
 
     }
 
+    public void ClearPage(){
+        gridPanel.removeAll();
+    }
 
-    public JPanel createMovieItemPanel(String movieName, String rating, String runtime, String genres) {
-        JPanel itemPanel = new JPanel();
-        itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.Y_AXIS));
+    public void displayMovies(List<BrowseOutputData.MovieCardData> movies) {
 
-        JLabel imagePlaceholder = new JLabel();
-        imagePlaceholder.setPreferredSize(new Dimension(150, 200));
-        imagePlaceholder.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        imagePlaceholder.setText("Image Placeholder");
+        for (int i = 0; i < movies.toArray().length; i++) {
+            gridPanel.add(createMovieCard(movies.get(i)));
 
-        JLabel nameLabel = new JLabel(movieName);
-        JLabel ratingLabel = new JLabel("Rating: " + rating + " - Runtime: " + runtime);
-        JLabel genresLabel = new JLabel("Genres: " + genres);
+        }
 
-        itemPanel.add(imagePlaceholder);
-        itemPanel.add(nameLabel);
-        itemPanel.add(ratingLabel);
-        itemPanel.add(genresLabel);
+        gridPanel.revalidate();
+        gridPanel.repaint();
+    }
 
-        itemPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        return itemPanel;
+    private JPanel createMovieCard(BrowseOutputData.MovieCardData movie) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(new Color(60, 60, 60));
+        card.setPreferredSize(new Dimension(150, 250));
+
+        JLabel title = new JLabel(movie.title);
+        JLabel rating = new JLabel("★ " + movie.rating);
+        JLabel runtime = new JLabel(movie.runtime+ " min");
+        JLabel genres = new JLabel(movie.genres);
+
+        try {
+            URL url = new URL(movie.posterURL);
+            ImageIcon icon = new ImageIcon(url);
+
+            // Optional: scale the image to fit the label size
+            Image scaled = icon.getImage().getScaledInstance(120, 160, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(scaled);
+
+            JLabel poster = new JLabel(icon);
+            poster.setPreferredSize(new Dimension(120, 160));
+            card.add(poster);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JLabel poster = new JLabel("Poster");
+        }
+
+
+
+
+        card.add(title);
+        card.add(rating);
+        card.add(runtime);
+        card.add(genres);
+
+        return card;
     }
 
     public String getViewName() {
         return viewName;
     }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("populating page");
+        final BrowseState browseState = (BrowseState) evt.getNewValue();
+        populatePage(browseState);
+
+
+    }
+
+    public void populatePage(BrowseState state){
+        displayMovies(state.getMovies(state.getCurrentPageNumber()));
+    }
+
+
+    public void setBrowseController(BrowseController browseController) {this.browseController=browseController;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final BrowseState browseState = viewModel.getState();
+        if(e.getSource() == browseButton || e.getSource() == loadMoreButton ) {
+            if(e.getSource() == loadMoreButton){
+                browseState.incrementPage();
+            if(e.getSource() == browseButton){
+                ClearPage();
+                browseState.resetCurrentPage();
+
+            }
+            }
+            browseController.executeQuery(
+                    browseState.getSearchState().getYear(),
+                    browseState.getSearchState().getQuery(),
+                    browseState.getSearchState().getPageNumber(),
+                    browseState.getSearchState().SortAscending(),
+                    browseState.getSearchState().SortDescending()
+            );
+        }
+        else if(e.getSource() == sortBox) {
+            if (sortBox.getSelectedIndex() == 0) {
+                browseState.getSearchState().setSortAscending();
+
+            }
+            else if (sortBox.getSelectedIndex() == 1) {
+                browseState.getSearchState().setSortDescending();
+            }
+
+        }
+        else if(e.getSource() == searchField) {
+            browseState.getSearchState().setQuery(searchField.getText());
+            System.out.println(browseState.getSearchState().getQuery());
+
+        }
+        else if(e.getSource() == yearBox) {
+            if(yearBox.getSelectedItem().toString() != "Any"){
+                browseState.getSearchState().setYear(yearBox.getSelectedItem().toString());
+            }
+            System.out.println(browseState.getSearchState().getYear());
+        }
+
+    }
+
+
+
+
 }
+

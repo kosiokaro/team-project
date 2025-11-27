@@ -1,6 +1,7 @@
 package app;
 
 
+import data_access.BrowseDataAccess;
 import data_access.ClickingDataAccessTMDb;
 import data_access.FileUserDataAccessObject;
 
@@ -9,6 +10,9 @@ import entity.MediaDetailsResponse;
 import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
 
+import interface_adapter.browse.BrowseController;
+import interface_adapter.browse.BrowsePresenter;
+import interface_adapter.browse.BrowseViewModel;
 import interface_adapter.home.HomeViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -19,9 +23,13 @@ import interface_adapter.rate_and_comment.CommentViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import use_case.browse.BrowseInputBoundary;
+import use_case.browse.BrowseInteractor;
+import use_case.browse.BrowseOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
+
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingPresenter;
 import interface_adapter.clicking.ClickingController;
@@ -43,30 +51,34 @@ public class AppBuilder {
     private final CardLayout cardLayout = new CardLayout();
     final ViewManagerModel viewManagerModel = new ViewManagerModel();
     ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
-
+    final BrowseDataAccess browseDataAccess = new BrowseDataAccess();
     final FileUserDataAccessObject userDataAccessObject = new FileUserDataAccessObject();
     //views and view models
     private SignupView signupView;
     private SignupViewModel signupViewModel;
-  
+
     private LoginView loginView;
     private LoginViewModel  loginViewModel;
-  
+
     private WatchlistView watchlistView;
     private FavoritesView favoritesView;
+
     private BrowseView browseView;
+    private BrowseViewModel browseViewModel;
 
     private HomepageView homepageView;
     private HomeViewModel homeViewModel;
-  
+
     private RateAndCommentView rateAndCommentView;
     private CommentViewModel commentViewModel;
-  
+
     private RandCSuccessSubmitView randCSuccessSubmitView;
     private RandCSuccessViewModel randCSuccessViewModel;
-  
+
     private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
+    private ClickingController clickingController;
+
 
 
     public AppBuilder() {
@@ -78,6 +90,7 @@ public class AppBuilder {
         commentViewModel = new CommentViewModel();
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
+        browseViewModel = new BrowseViewModel();
     }
 
     public AppBuilder addSignUpView() {
@@ -93,7 +106,7 @@ public class AppBuilder {
         cardPanel.add(loginView, loginView.getViewName());
         return this;
     }
-  
+
     public AppBuilder addClickingView() {
 
         clickingView = new ClickingView(clickingViewModel,commentViewModel,viewManagerModel);
@@ -128,7 +141,7 @@ public class AppBuilder {
         final ClickingInputBoundary clickingInteractor = new ClickingInteractor(
                 clickingPresenter, clickingDataAccess);
 
-        final ClickingController clickingController = new ClickingController(clickingInteractor);
+        this.clickingController = new ClickingController(clickingInteractor);
         clickingView.setClickingController(clickingController);
         return this;
     }
@@ -136,12 +149,42 @@ public class AppBuilder {
     public AppBuilder addWatchlistView() {
         watchlistView = new WatchlistView();
         cardPanel.add(watchlistView, watchlistView.getViewName());
+
+        watchlistView.setswitchtofavButtonListener(e -> {
+            viewManagerModel.setState(favoritesView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
+        watchlistView.sethomeButtonListener(e -> {
+            viewManagerModel.setState(homepageView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
+        watchlistView.setDetailsClickListener(movieId -> {
+            if (clickingController != null) {
+                clickingController.onClick(movieId);
+            } else {
+                System.err.println("ClickingController not initialized! Make sure addClickingUseCase() is called before addWatchlistView()");
+            }
+        });
+
         return this;
     }
 
     public AppBuilder addFavoritesView() {
         favoritesView = new FavoritesView();
         cardPanel.add(favoritesView, favoritesView.getViewName());
+
+        favoritesView.setswitchtowatchButtonListener(e -> {
+            viewManagerModel.setState(watchlistView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
+        favoritesView.sethomeButtonListener(e -> {
+            viewManagerModel.setState(homepageView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
+
         return this;
     }
 
@@ -151,7 +194,7 @@ public class AppBuilder {
         cardPanel.add(rateAndCommentView,rateAndCommentView.getViewName());
         return this;
     }
-  
+
     public AppBuilder addRandCView() {
 
         randCSuccessSubmitView = new RandCSuccessSubmitView(viewManagerModel, randCSuccessViewModel, clickingViewModel,
@@ -159,14 +202,14 @@ public class AppBuilder {
         cardPanel.add(randCSuccessSubmitView, randCSuccessSubmitView.getViewName());
         return this;
     }
-//    public AppBuilder addBrowseView() {
-//        browseView = new BrowseView();
-//        cardPanel.add(browseView, browseView.getViewname());
-//        return this;
-//    }
 
-   
-   
+    public AppBuilder addBrowseView(){
+        browseView = new BrowseView(browseViewModel);
+        cardPanel.add(browseView, browseView.getViewName());
+        return this;
+    }
+
+
     public AppBuilder addHomepageView() {
 
         homepageView = new HomepageView(homeViewModel);
@@ -176,7 +219,8 @@ public class AppBuilder {
         // For browse: you said it's "in progress" so either add a browse view
         // or use homepageView.getViewName() as a placeholder.
         homepageView.setBrowseButtonListener(e -> {
-            viewManagerModel.setState("BROWSE");
+            viewManagerModel.setState(browseView.getViewName());
+            viewManagerModel.firePropertyChange();
         });
 
         // These two will use the actual view names (safer than hard-coded strings)
@@ -190,14 +234,17 @@ public class AppBuilder {
             viewManagerModel.firePropertyChange();
         });
 
-        homepageView.setLogoutButtonListener(e -> {
-            viewManagerModel.setState("log in");
-            viewManagerModel.firePropertyChange();
-        });
-
         return this;
     }
 
+    public AppBuilder addBrowseUseCase(){
+        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel);
+        final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browseOutputBoundary);
+
+        BrowseController browseController = new BrowseController(browseInputBoundary);
+        browseView.setBrowseController(browseController);
+        return this;
+    }
 
     public AppBuilder addSignupUseCase(){
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
@@ -244,7 +291,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(clickingView.getViewName());
+                viewManagerModel.setState(homepageView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });
