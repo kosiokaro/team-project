@@ -32,12 +32,12 @@ public class RandCSuccessSubmitView extends JPanel implements PropertyChangeList
     private String viewname = "RandC";
 
     // 现代配色
-    private static final Color PRIMARY_BG = new Color(248, 250, 252);
+    private static final Color PRIMARY_BG = new Color(17, 24, 39);
     private static final Color SUCCESS_GREEN = new Color(34, 197, 94);
     private static final Color ACCENT_BLUE = new Color(59, 130, 246);
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color CARD_BG = Color.WHITE;
+    private static final Color TEXT_SECONDARY = new Color(243, 244, 246);
+    private static final Color CARD_BG = new Color(31, 41, 55);
 
     public RandCSuccessSubmitView(ViewManagerModel viewManagerModel, RandCSuccessViewModel randCSuccessViewModel,
                                   ClickingViewModel clickingViewModel, HomeViewModel homeViewModel) {
