@@ -168,12 +168,8 @@ public class AppBuilder {
     }
 
     public AppBuilder addWatchlistView() {
-        watchlistView = new WatchlistView();
+        watchlistView = new WatchlistView(loadWatchListViewModel);
         cardPanel.add(watchlistView, watchlistView.getViewName());
-
-        loadWatchListViewModel.addPropertyChangeListener(watchlistView);
-        addToWatchListViewModel.addPropertyChangeListener(watchlistView);
-        deleteFromWatchListViewModel.addPropertyChangeListener(watchlistView);
 
         watchlistView.setswitchtofavButtonListener(e -> {
             viewManagerModel.setState(favoritesView.getViewName());
@@ -307,7 +303,7 @@ public class AppBuilder {
     public AppBuilder addLoadWatchListUseCase() {
         // Movie data access (for fetching movie details from API)
         final LoadWatchListDataAccessInterface loadWatchListDataAccess =
-                new WatchlistMovieDataAccess("YOUR_API_KEY_HERE");
+                new WatchlistMovieDataAccess("Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM");
 
         final AddToWatchListDataAccessInterface userDataAccess = userDataAccessObject;
 

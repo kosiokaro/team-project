@@ -13,13 +13,15 @@ public class AddToWatchListPresenter implements AddToWatchListOutputBoundary {
 
     @Override
     public void presentSuccess(AddToWatchListOutputData outputData) {
-        viewModel.setState(outputData.getMessage());
+        final AddToWatchListState viewState = viewModel.getState();
+        viewState.setWasAdded(true);
+//        outputData was added for T
         viewModel.firePropertyChange();
     }
 
     @Override
     public void presentError(String error) {
-        viewModel.setState(error);
-        viewModel.firePropertyChange();
+//        viewModel.setState(error);
+//        viewModel.firePropertyChange();
     }
 }

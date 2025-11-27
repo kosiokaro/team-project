@@ -12,9 +12,12 @@ import java.util.List;
 import entity.Movie;
 
 import interface_adapter.watchlist.LoadWatchListController;
+import interface_adapter.watchlist.LoadWatchListState;
+import interface_adapter.watchlist.LoadWatchListViewModel;
 import interface_adapter.watchlist.WatchListController;
 
 public class WatchlistView extends JPanel implements PropertyChangeListener {
+    private final LoadWatchListViewModel loadViewModel;
     private WatchListController controller;
     private LoadWatchListController loadController;
     private String currentUsername;
@@ -39,7 +42,10 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     private java.util.function.Consumer<Integer> detailsClickListener;
 
 
-    public WatchlistView(){
+    public WatchlistView(LoadWatchListViewModel loadViewModel) {
+        this.loadViewModel = loadViewModel;
+        this.loadViewModel.addPropertyChangeListener(this);
+
         this.setLayout(new BorderLayout());
         this.allMediaData = new ArrayList<>();
 
@@ -119,8 +125,8 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if ("state".equals(evt.getPropertyName())) {
             @SuppressWarnings("unchecked")
-            ArrayList<Movie> movies = (ArrayList<Movie>) evt.getNewValue();
-            loadWatchlist(movies);
+            LoadWatchListState state = (LoadWatchListState) evt.getNewValue();
+            loadWatchlist(state.getMovies());
         } else if ("message".equals(evt.getPropertyName())) {
             String message = (String) evt.getNewValue();
             if (message != null) {

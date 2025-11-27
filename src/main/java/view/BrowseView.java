@@ -3,6 +3,7 @@ package view;
 import interface_adapter.browse.BrowseController;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
+import interface_adapter.watchlist.AddToWatchListViewModel;
 import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputData;
 
@@ -42,13 +43,16 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
 
     public static final String viewName = "BROWSE";
     private final BrowseViewModel viewModel;
+//    private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
 
 
     public BrowseView(BrowseViewModel viewModel) {
 
         this.viewModel = viewModel;
+//        this.addToWatchListViewModel = addToWatchListViewModel;
         viewModel.addPropertyChangeListener(this);
+//        addToWatchListViewModel.addPropertyChangeListener(this);
         createUIComponents();
     }
 
@@ -177,7 +181,7 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         addToWatchlistBtn.setMaximumSize(new Dimension(120, 25));
         addToWatchlistBtn.addActionListener(e -> {
             if (watchListController != null) {
-                watchListController.addToWatchList("testuser", String.valueOf(movie.getMovieID()));
+                watchListController.addToWatchList("Eil", String.valueOf(movie.getMovieID()));
                 JOptionPane.showMessageDialog(this, "Added \"" + movie.title + "\" to watchlist!");
             }
         });
