@@ -227,6 +227,11 @@ public class AppBuilder {
     public AppBuilder addBrowseView(){
         browseView = new BrowseView(browseViewModel);
         cardPanel.add(browseView, browseView.getViewName());
+
+        browseView.setHomeButtonListener(e -> {
+            viewManagerModel.setState(homepageView.getViewName());
+            viewManagerModel.firePropertyChange();
+        });
         return this;
     }
 
@@ -361,7 +366,7 @@ public class AppBuilder {
 
         application.add(cardPanel);
 
-        application.setSize(800, 600);
+        application.setSize(1200, 1000);
         application.setLocationRelativeTo(null);
 
 

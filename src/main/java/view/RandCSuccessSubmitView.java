@@ -5,7 +5,6 @@ import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
-import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 
 import javax.swing.*;
@@ -15,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -32,12 +30,12 @@ public class RandCSuccessSubmitView extends JPanel implements PropertyChangeList
     private String viewname = "RandC";
 
     // 现代配色
-    private static final Color PRIMARY_BG = new Color(248, 250, 252);
+    private static final Color PRIMARY_BG = new Color(17, 24, 39);
     private static final Color SUCCESS_GREEN = new Color(34, 197, 94);
     private static final Color ACCENT_BLUE = new Color(59, 130, 246);
     private static final Color TEXT_PRIMARY = new Color(30, 41, 59);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color CARD_BG = Color.WHITE;
+    private static final Color TEXT_SECONDARY = new Color(243, 244, 246);
+    private static final Color CARD_BG = new Color(31, 41, 55);
 
     public RandCSuccessSubmitView(ViewManagerModel viewManagerModel, RandCSuccessViewModel randCSuccessViewModel,
                                   ClickingViewModel clickingViewModel, HomeViewModel homeViewModel) {
@@ -59,7 +57,7 @@ public class RandCSuccessSubmitView extends JPanel implements PropertyChangeList
         cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
         cardPanel.setBackground(CARD_BG);
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+                BorderFactory.createLineBorder(new Color(45, 55, 72), 1),
                 new EmptyBorder(40, 50, 40, 50)
         ));
         cardPanel.setPreferredSize(new Dimension(500, 400));
