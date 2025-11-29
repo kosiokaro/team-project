@@ -16,13 +16,14 @@ public class Main {
                 .addBrowseView()
                 .addClickingUseCase()
                 .addRandCView()
-                .addBrowseView()
                 .addBrowseUseCase()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addCommentUseCase()
                 .addClickingUseCase()
                 .addBrowseUseCase()
+                .addLoadWatchListUseCase()
+                .addWatchListUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);
