@@ -24,7 +24,7 @@ public class Movie extends Media {
     }
 
     public String getTitle() {
-        return overview;
+        return title;
     }
 
     public String getOverview() {

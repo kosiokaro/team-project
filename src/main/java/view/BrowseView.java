@@ -20,6 +20,7 @@ import java.util.List;
 
 public class BrowseView extends JPanel  implements PropertyChangeListener, ActionListener {
     private WatchListController watchListController;
+    private String currentUsername;
 
     public static final Color TOPBAR_BACKGROUND_COLOR = new Color(50, 50, 50);
     public static final Color BACKGROUND_COLOR = new Color(3, 9, 78);
@@ -54,6 +55,10 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         viewModel.addPropertyChangeListener(this);
 //        addToWatchListViewModel.addPropertyChangeListener(this);
         createUIComponents();
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
     }
 
     private void createUIComponents() {
@@ -181,7 +186,7 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         addToWatchlistBtn.setMaximumSize(new Dimension(120, 25));
         addToWatchlistBtn.addActionListener(e -> {
             if (watchListController != null) {
-                watchListController.addToWatchList("Eil", String.valueOf(movie.getMovieID()));
+                watchListController.addToWatchList(currentUsername, String.valueOf(movie.getMovieID()));
                 JOptionPane.showMessageDialog(this, "Added \"" + movie.title + "\" to watchlist!");
             }
         });
@@ -194,6 +199,7 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
     public String getViewName() {
         return viewName;
     }
+
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

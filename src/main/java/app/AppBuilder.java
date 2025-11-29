@@ -279,10 +279,13 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoginUseCase(){
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
+        final LoginPresenter loginPresenter = new LoginPresenter(viewManagerModel,
                 homeViewModel, loginViewModel);
+        loginPresenter.setWatchlistView(watchlistView);
+        loginPresenter.setBrowseView(browseView);
+
         final LoginInputBoundary loginInputBoundary = new LoginInteractor(userDataAccessObject,
-                loginOutputBoundary);
+                loginPresenter);  // ← Use loginPresenter, not loginOutputBoundary
 
         LoginController loginController = new LoginController(loginInputBoundary);
         loginView.setLoginController(loginController);
@@ -317,6 +320,7 @@ public class AppBuilder {
                 new LoadWatchListController(loadWatchListInteractor);
 
         watchlistView.setLoadController(loadWatchListController);
+        System.out.println("LoadWatchListController set on watchlistView");
 
         return this;
     }
@@ -363,7 +367,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(homepageView.getViewName());
+                viewManagerModel.setState(loginView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });

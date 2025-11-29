@@ -195,7 +195,12 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-        return user.getWatchlist();
+
+        ArrayList<Integer> watchlist = user.getWatchlist();
+        System.out.println("Watchlist for " + username + ": " + watchlist);
+        System.out.println("Watchlist size: " + (watchlist != null ? watchlist.size() : "NULL"));
+
+        return watchlist;
     }
 
     @Override
