@@ -11,10 +11,21 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class ClickingView extends JPanel implements PropertyChangeListener {
+    // Modern color palette matching homepage and browse
+    private static final Color PRIMARY_COLOR = new Color(99, 102, 241);
+    private static final Color SECONDARY_COLOR = new Color(139, 92, 246);
+    private static final Color BACKGROUND_COLOR = new Color(17, 24, 39);
+    private static final Color CARD_COLOR = new Color(31, 41, 55);
+    private static final Color TEXT_COLOR = new Color(243, 244, 246);
+    private static final Color ACCENT_COLOR = new Color(147, 51, 234);
+    private static final Color HOVER_COLOR = new Color(45, 55, 72);
+
     private final ClickingViewModel viewModel;
     private final CommentViewModel commentViewModel;
     private final ViewManagerModel viewManagerModel;
@@ -28,9 +39,9 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     private JLabel yearLabel = new JLabel();
     private JLabel ratingLabel = new JLabel();
     private JLabel genresLabel = new JLabel();
-    private JButton rateButton = new JButton("⭐ Rate and Comment");
-    private JButton backButton = new JButton("← Back");
-    private JButton exitButton = new JButton("✕");
+    private JButton rateButton = new JButton("Rate and Comment");
+    private JButton backButton = new JButton("Back");
+    private JButton exitButton = new JButton("Home");
 
     private final String viewName = "clicking";
     private String previousViewName = "BROWSE";
@@ -43,8 +54,8 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         this.viewManagerModel = viewManager;
 
         setLayout(new BorderLayout(10, 10));
-        setBackground(Color.WHITE); // White background
-        setBorder(new EmptyBorder(15, 15, 15, 15));
+        setBackground(BACKGROUND_COLOR);
+        setBorder(new EmptyBorder(20, 30, 20, 30));
 
         JPanel topPanel = createTopPanel();
         add(topPanel, BorderLayout.NORTH);
@@ -60,39 +71,36 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
 
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(Color.WHITE);
-        topPanel.setBorder(new EmptyBorder(0, 0, 15, 0));
+        topPanel.setBackground(BACKGROUND_COLOR);
+        topPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
-        backButton.setFocusPainted(false);
+        styleButton(backButton, ACCENT_COLOR, new Color(126, 34, 206));
         backButton.setToolTipText("Return to Browse");
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setBackground(Color.WHITE);
+        leftPanel.setBackground(BACKGROUND_COLOR);
         leftPanel.add(backButton);
         topPanel.add(leftPanel, BorderLayout.WEST);
 
-        exitButton.setFont(new Font("Arial", Font.BOLD, 18));
-        exitButton.setFocusPainted(false);
-        exitButton.setForeground(Color.RED);
+        styleButton(exitButton, new Color(239, 68, 68), new Color(220, 38, 38));
         exitButton.setToolTipText("Return to Homepage");
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.setBackground(BACKGROUND_COLOR);
         rightPanel.add(exitButton);
         topPanel.add(rightPanel, BorderLayout.EAST);
 
         // Title and error in center
         JPanel centerTopPanel = new JPanel();
         centerTopPanel.setLayout(new BoxLayout(centerTopPanel, BoxLayout.Y_AXIS));
-        centerTopPanel.setBackground(Color.WHITE);
+        centerTopPanel.setBackground(BACKGROUND_COLOR);
 
-        errorLabel.setForeground(Color.RED);
-        errorLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        errorLabel.setForeground(new Color(239, 68, 68));
+        errorLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        titleLabel.setForeground(new Color(33, 33, 33));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        titleLabel.setForeground(TEXT_COLOR);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         centerTopPanel.add(errorLabel);
@@ -105,39 +113,48 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     }
 
     private JPanel createCenterPanel() {
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 0));
-        centerPanel.setBackground(Color.WHITE);
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 30, 0));
+        centerPanel.setBackground(BACKGROUND_COLOR);
+        centerPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
+        // Poster Panel
         JPanel posterPanel = new JPanel(new BorderLayout());
-        posterPanel.setBackground(Color.WHITE);
+        posterPanel.setBackground(CARD_COLOR);
+        posterPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(55, 65, 81), 2),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+
         posterLabel.setHorizontalAlignment(SwingConstants.CENTER);
         posterLabel.setVerticalAlignment(SwingConstants.CENTER);
-        posterLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        posterLabel.setForeground(Color.GRAY);
+        posterLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        posterLabel.setForeground(new Color(156, 163, 175));
         posterPanel.add(posterLabel, BorderLayout.CENTER);
 
+        // Overview Panel
         JPanel overviewPanel = new JPanel(new BorderLayout());
-        overviewPanel.setBackground(Color.WHITE);
+        overviewPanel.setBackground(CARD_COLOR);
         overviewPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(224, 224, 224), 1),
-                new EmptyBorder(15, 15, 15, 15)
+                BorderFactory.createLineBorder(new Color(55, 65, 81), 2),
+                new EmptyBorder(20, 20, 20, 20)
         ));
 
         JLabel overviewTitle = new JLabel("Overview");
-        overviewTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        overviewTitle.setForeground(new Color(66, 66, 66));
+        overviewTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        overviewTitle.setForeground(TEXT_COLOR);
         overviewPanel.add(overviewTitle, BorderLayout.NORTH);
 
         overviewText.setLineWrap(true);
         overviewText.setWrapStyleWord(true);
         overviewText.setEditable(false);
-        overviewText.setFont(new Font("Arial", Font.PLAIN, 14));
-        overviewText.setForeground(new Color(33, 33, 33));
-        overviewText.setBackground(Color.WHITE);
-        overviewText.setBorder(new EmptyBorder(10, 0, 0, 0));
+        overviewText.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        overviewText.setForeground(new Color(209, 213, 219));
+        overviewText.setBackground(CARD_COLOR);
+        overviewText.setBorder(new EmptyBorder(15, 0, 0, 0));
 
         JScrollPane scroll = new JScrollPane(overviewText);
         scroll.setBorder(null);
+        scroll.getViewport().setBackground(CARD_COLOR);
         overviewPanel.add(scroll, BorderLayout.CENTER);
 
         centerPanel.add(posterPanel);
@@ -147,43 +164,44 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
     }
 
     private JPanel createBottomPanel() {
-        JPanel bottomPanel = new JPanel(new BorderLayout(0, 15));
-        bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.setBorder(new EmptyBorder(15, 0, 0, 0));
+        JPanel bottomPanel = new JPanel(new BorderLayout(0, 20));
+        bottomPanel.setBackground(BACKGROUND_COLOR);
+        bottomPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
         // Details Panel
         JPanel detailsCard = new JPanel();
-        detailsCard.setLayout(new GridLayout(2, 2, 20, 15));
-        detailsCard.setBackground(Color.WHITE);
+        detailsCard.setLayout(new GridLayout(2, 2, 30, 20));
+        detailsCard.setBackground(CARD_COLOR);
         detailsCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(224, 224, 224), 1),
-                new EmptyBorder(20, 25, 20, 25)
+                BorderFactory.createLineBorder(new Color(55, 65, 81), 2),
+                new EmptyBorder(25, 30, 25, 30)
         ));
 
-        Font detailFont = new Font("Arial", Font.PLAIN, 15);
+        Font detailFont = new Font("Segoe UI", Font.PLAIN, 15);
         yearLabel.setFont(detailFont);
         ratingLabel.setFont(detailFont);
         languageLabel.setFont(detailFont);
         genresLabel.setFont(detailFont);
 
-        yearLabel.setForeground(new Color(33, 33, 33));
-        ratingLabel.setForeground(new Color(33, 33, 33));
-        languageLabel.setForeground(new Color(33, 33, 33));
-        genresLabel.setForeground(new Color(33, 33, 33));
+        yearLabel.setForeground(TEXT_COLOR);
+        ratingLabel.setForeground(new Color(250, 204, 21)); // Gold for rating
+        languageLabel.setForeground(TEXT_COLOR);
+        genresLabel.setForeground(TEXT_COLOR);
 
-        detailsCard.add(createDetailItem("📅 Release Year:", yearLabel));
-        detailsCard.add(createDetailItem("⭐ Rating:", ratingLabel));
-        detailsCard.add(createDetailItem("🌐 Language:", languageLabel));
-        detailsCard.add(createDetailItem("🎬 Genres:", genresLabel));
+        detailsCard.add(createDetailItem("Release Year:", yearLabel));
+        detailsCard.add(createDetailItem("Rating:", ratingLabel));
+        detailsCard.add(createDetailItem("Language:", languageLabel));
+        detailsCard.add(createDetailItem("Genres:", genresLabel));
 
         bottomPanel.add(detailsCard, BorderLayout.CENTER);
 
-
+        // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBackground(BACKGROUND_COLOR);
 
-        rateButton.setFont(new Font("Arial", Font.BOLD, 16));
-        rateButton.setPreferredSize(new Dimension(220, 40));
+        styleButton(rateButton, PRIMARY_COLOR, SECONDARY_COLOR);
+        rateButton.setPreferredSize(new Dimension(220, 45));
+        rateButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         buttonPanel.add(rateButton);
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -193,16 +211,38 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
 
     private JPanel createDetailItem(String labelText, JLabel valueLabel) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(CARD_COLOR);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Arial", Font.BOLD, 15));
-        label.setForeground(new Color(66, 66, 66));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        label.setForeground(new Color(156, 163, 175));
 
         panel.add(label);
         panel.add(valueLabel);
 
         return panel;
+    }
+
+    private void styleButton(JButton button, Color bgColor, Color hoverColor) {
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(new EmptyBorder(10, 25, 10, 25));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(bgColor);
+            }
+        });
     }
 
     private void setupButtonActions() {
@@ -241,9 +281,9 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         }
 
         titleLabel.setText(state.getTitle() != null ? state.getTitle() : "Unknown Title");
-        yearLabel.setText("Year: " + state.getYear());
-        ratingLabel.setText("Rating: " + state.getRating());
-        languageLabel.setText("Language: " + state.getLanguage());
+        yearLabel.setText(String.valueOf(state.getYear()));
+        ratingLabel.setText(String.valueOf(state.getRating()));
+        languageLabel.setText(state.getLanguage());
         overviewText.setText(state.getOverview());
 
         if (state.getGenres() != null && !state.getGenres().isEmpty()) {
@@ -311,7 +351,3 @@ public class ClickingView extends JPanel implements PropertyChangeListener {
         this.clickingController = controller;
     }
 }
-
-
-
-
