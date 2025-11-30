@@ -6,7 +6,6 @@ import data_access.ClickingDataAccessTMDb;
 import data_access.FileUserDataAccessObject;
 
 
-import data_access.WatchlistMovieDataAccess;
 import entity.MediaDetailsResponse;
 import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
@@ -24,7 +23,6 @@ import interface_adapter.rate_and_comment.CommentViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
-import interface_adapter.watchlist.*;
 import use_case.browse.BrowseInputBoundary;
 import use_case.browse.BrowseInteractor;
 import use_case.browse.BrowseOutputBoundary;
@@ -43,18 +41,6 @@ import use_case.rate_and_comment.CommentOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import use_case.watchlist.addToWatchList.AddToWatchListDataAccessInterface;
-import use_case.watchlist.addToWatchList.AddToWatchListInputBoundaryData;
-import use_case.watchlist.addToWatchList.AddToWatchListInteractor;
-import use_case.watchlist.addToWatchList.AddToWatchListOutputBoundary;
-import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListDataAccessInterface;
-import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListInputBoundaryData;
-import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListInteractor;
-import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListOutputBoundary;
-import use_case.watchlist.loadWatchList.LoadWatchListDataAccessInterface;
-import use_case.watchlist.loadWatchList.LoadWatchListInputBoundaryData;
-import use_case.watchlist.loadWatchList.LoadWatchListInteractor;
-import use_case.watchlist.loadWatchList.LoadWatchListOutputBoundaryData;
 import view.*;
 
 import javax.swing.*;
@@ -75,10 +61,6 @@ public class AppBuilder {
     private LoginViewModel  loginViewModel;
 
     private WatchlistView watchlistView;
-    private LoadWatchListViewModel loadWatchListViewModel;
-    private AddToWatchListViewModel addToWatchListViewModel;
-    private DeleteFromWatchListViewModel deleteFromWatchListViewModel;
-
     private FavoritesView favoritesView;
 
     private BrowseView browseView;
@@ -111,9 +93,6 @@ public class AppBuilder {
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
         browseViewModel = new BrowseViewModel();
-        loadWatchListViewModel = new LoadWatchListViewModel();
-        addToWatchListViewModel = new AddToWatchListViewModel();
-        deleteFromWatchListViewModel = new DeleteFromWatchListViewModel();
     }
 
     public AppBuilder addSignUpView() {
@@ -170,7 +149,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addWatchlistView() {
-        watchlistView = new WatchlistView(loadWatchListViewModel);
+        watchlistView = new WatchlistView();
         cardPanel.add(watchlistView, watchlistView.getViewName());
 
         watchlistView.setswitchtofavButtonListener(e -> {
@@ -288,14 +267,14 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoginUseCase(){
-        final LoginPresenter loginPresenter = new LoginPresenter(viewManagerModel,
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
                 homeViewModel, loginViewModel);
         loginPresenter.setWatchlistView(watchlistView);
         loginPresenter.setBrowseView(browseView);
         loginPresenter.setBrowsePresenter(browsePresenter);
 
         final LoginInputBoundary loginInputBoundary = new LoginInteractor(userDataAccessObject,
-                loginPresenter);  // ← Use loginPresenter, not loginOutputBoundary
+                loginOutputBoundary);
 
         LoginController loginController = new LoginController(loginInputBoundary);
         loginView.setLoginController(loginController);
@@ -374,7 +353,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(loginView.getViewName());
+                viewManagerModel.setState(homepageView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });

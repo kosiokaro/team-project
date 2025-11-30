@@ -4,8 +4,6 @@ import interface_adapter.browse.BrowseController;
 import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
-import interface_adapter.watchlist.AddToWatchListViewModel;
-import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
@@ -47,14 +45,11 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
 
     public static final String viewName = "BROWSE";
     private final BrowseViewModel viewModel;
-//    private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
 
     public BrowseView(BrowseViewModel viewModel) {
         this.viewModel = viewModel;
-//        this.addToWatchListViewModel = addToWatchListViewModel;
         viewModel.addPropertyChangeListener(this);
-//        addToWatchListViewModel.addPropertyChangeListener(this);
         createUIComponents();
     }
 
@@ -336,7 +331,6 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
     public String getViewName() {
         return viewName;
     }
-
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

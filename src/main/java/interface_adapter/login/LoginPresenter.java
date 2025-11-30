@@ -6,8 +6,6 @@ import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
-import view.BrowseView;
-import view.WatchlistView;
 
 /**
  * The Presenter for the Login Use Case.
