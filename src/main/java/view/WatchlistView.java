@@ -1,7 +1,5 @@
 package view;
 
-import interface_adapter.home.HomeState;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -12,9 +10,9 @@ import java.util.List;
 import java.net.URL;
 import entity.Movie;
 
-import interface_adapter.watchlist.LoadWatchListController;
-import interface_adapter.watchlist.LoadWatchListState;
-import interface_adapter.watchlist.LoadWatchListViewModel;
+import interface_adapter.watchlist.load.LoadWatchListController;
+import interface_adapter.watchlist.load.LoadWatchListState;
+import interface_adapter.watchlist.load.LoadWatchListViewModel;
 import interface_adapter.watchlist.WatchListController;
 
 public class WatchlistView extends JPanel implements PropertyChangeListener {

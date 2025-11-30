@@ -25,12 +25,13 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
 import interface_adapter.watchlist.*;
+import interface_adapter.watchlist.load.LoadWatchListController;
+import interface_adapter.watchlist.load.LoadWatchListPresenter;
+import interface_adapter.watchlist.load.LoadWatchListViewModel;
 import use_case.browse.BrowseInputBoundary;
 import use_case.browse.BrowseInteractor;
-import use_case.browse.BrowseOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
-import use_case.login.LoginOutputBoundary;
 
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingPresenter;
