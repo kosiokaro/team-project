@@ -36,15 +36,15 @@ public class RateAndCommentView extends JPanel implements ActionListener, Proper
     private CommentController commentController = null;
 
     // 现代配色方案
-    private static final Color PRIMARY_BG = new Color(248, 250, 252);      // 浅灰蓝背景
-    private static final Color CARD_BG = Color.WHITE;                       // 卡片白色
+    private static final Color PRIMARY_BG = new Color(17, 24, 39);  // 浅灰蓝背景
+    private static final Color CARD_BG = new Color(31, 41, 55);             // 卡片白色
     private static final Color ACCENT_BLUE = new Color(59, 130, 246);      // 蓝色主题
     private static final Color ACCENT_GREEN = new Color(34, 197, 94);      // 绿色成功
-    private static final Color TEXT_PRIMARY = new Color(30, 41, 59);       // 深色文字
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);  // 次要文字
+    private static final Color TEXT_PRIMARY = new Color(243, 244, 246);      // 深色文字
+    private static final Color TEXT_SECONDARY = new Color(17, 24, 39);
     private static final Color STAR_ACTIVE = new Color(251, 191, 36);      // 金色星星
     private static final Color STAR_INACTIVE = new Color(203, 213, 225);   // 灰色星星
-    private static final Color BORDER_COLOR = new Color(226, 232, 240);    // 边框颜色
+    private static final Color BORDER_COLOR = new Color(45, 55, 72);   // 边框颜色
 
     public RateAndCommentView(ViewManagerModel viewManagerModel, CommentViewModel commentViewModel,
                               ClickingViewModel clickingViewModel) {
@@ -170,7 +170,7 @@ public class RateAndCommentView extends JPanel implements ActionListener, Proper
         // 评分文字提示
         ratingLabel = new JLabel("Click to rate");
         ratingLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        ratingLabel.setForeground(TEXT_SECONDARY);
+        ratingLabel.setForeground(TEXT_PRIMARY);
         ratingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         ratingContainer.add(ratingTitleLabel);
@@ -200,7 +200,7 @@ public class RateAndCommentView extends JPanel implements ActionListener, Proper
         reviewArea.setLineWrap(true);
         reviewArea.setWrapStyleWord(true);
         reviewArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        reviewArea.setForeground(TEXT_PRIMARY);
+        reviewArea.setForeground(TEXT_SECONDARY);
         reviewArea.setBackground(new Color(249, 250, 251));
         reviewArea.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_COLOR, 1),
@@ -345,7 +345,7 @@ public class RateAndCommentView extends JPanel implements ActionListener, Proper
         // 更新提示文字
         if (newRating == 0) {
             ratingLabel.setText("Click to rate");
-            ratingLabel.setForeground(TEXT_SECONDARY);
+            ratingLabel.setForeground(TEXT_PRIMARY);
         } else {
             String[] descriptions = {"Poor", "Fair", "Good", "Very Good", "Excellent"};
             ratingLabel.setText(newRating + " / 5 - " + descriptions[newRating - 1]);
