@@ -8,16 +8,32 @@ public abstract class Media {
     public String language;
     public int[] genreIDs;
 
-    public Media(String title, int referenceNumber, String[] genreNames,String posterUrl,String language) {
+    public Media(String title, int referenceNumber, String[] genreNames, String posterUrl, String language) {
         this.title = title;
         this.referenceNumber = referenceNumber;
         this.genreIDs = new int[]{};
         this.posterUrl = posterUrl;
-        this.language =  language;
+        this.language = language;
         this.genreNames = genreNames;
     }
 
-    public int  getReferenceNumber() {
+    public String getTitle() {
+        return title;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String[] getGenres() {
+        return genreNames;
+    }
+
+    public int getReferenceNumber() {
         return referenceNumber;
     }
 }

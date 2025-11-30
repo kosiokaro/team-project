@@ -2,9 +2,11 @@ package interface_adapter.browse;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingController;
+import interface_adapter.watchlist.WatchListController;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
 import interface_adapter.login.LoginState;
+import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputBoundary;
 import use_case.browse.BrowseOutputData;
 import use_case.clicking.ClickingInteractor;
@@ -17,6 +19,8 @@ public class BrowsePresenter implements BrowseOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final ClickingViewModel clickingViewModel;
     private final ClickingController  clickingController;
+    private WatchListController watchListController;
+    private String currentUsername;
 
 
     public BrowsePresenter(BrowseViewModel browseViewModel, ViewManagerModel viewManagerModel,ClickingViewModel clickingViewModel, ClickingController clickingController) {
@@ -24,7 +28,33 @@ public class BrowsePresenter implements BrowseOutputBoundary {
         this.viewManagerModel = viewManagerModel;
         this.clickingViewModel = clickingViewModel;
         this.clickingController = clickingController;
+    }
 
+    public void addToWatchList(int movieID) {
+        if (watchListController != null && currentUsername != null) {
+            System.out.println("BrowsePresenter: Adding movie " + movieID + " to watchlist for user: " + currentUsername);
+            watchListController.addToWatchList(currentUsername, String.valueOf(movieID));
+        } else {
+            System.err.println("Cannot add to watchlist - WatchListController: " +
+                    (watchListController == null ? "NULL" : "SET") +
+                    ", Username: " + (currentUsername == null ? "NULL" : currentUsername));
+        }
+    }
+
+    public String getCurrentUsername() {
+        return currentUsername;
+    }
+
+    public WatchListController getWatchListController() {
+        return watchListController;
+    }
+
+    public void setWatchListController(WatchListController watchListController) {
+        this.watchListController = watchListController;
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
     }
 
 

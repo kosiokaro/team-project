@@ -315,7 +315,13 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         addToWatchlistButton.addActionListener(e -> {
             int id = (int) card.getClientProperty("movieID");
             System.out.println("Adding to watchlist - movie ID: " + id);
-            // Just placeholder
+            System.out.println("BrowsePresenter: " + (browsePresenter != null ? "SET" : "NULL"));
+            System.out.println("Username: " + (browsePresenter != null ? browsePresenter.getCurrentUsername() : "N/A"));
+            if (browsePresenter != null) {
+                browsePresenter.addToWatchList(id);
+            } else {
+                System.err.println("ERROR: BrowsePresenter is NULL!");
+            }
         });
 
         card.add(addToWatchlistButton);
