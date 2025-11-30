@@ -121,7 +121,6 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
     public void setLoadController(LoadWatchListController controller) {
         this.loadController = controller;
-        attemptLoad();
     }
 
     public void loadWatchlist(List<Movie> movies) {
