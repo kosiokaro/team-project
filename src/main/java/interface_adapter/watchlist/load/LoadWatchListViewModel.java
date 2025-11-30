@@ -1,8 +1,6 @@
-package interface_adapter.watchlist;
+package interface_adapter.watchlist.load;
 
 import interface_adapter.ViewModel;
-import entity.Movie;
-import java.util.ArrayList;
 
 public class LoadWatchListViewModel extends ViewModel<LoadWatchListState> {
     public LoadWatchListViewModel() {

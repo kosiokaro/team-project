@@ -1,4 +1,4 @@
-package interface_adapter.watchlist;
+package interface_adapter.watchlist.load;
 
 import entity.Movie;
 
