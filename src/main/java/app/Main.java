@@ -20,8 +20,8 @@ public class Main {
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addCommentUseCase()
-                .addWatchListUseCase()
                 .addLoadWatchListUseCase()
+                .addWatchListUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);
