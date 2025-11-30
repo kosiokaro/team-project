@@ -1,6 +1,7 @@
 package view;
 
 import interface_adapter.browse.BrowseController;
+import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
 import use_case.browse.BrowseOutputData;
@@ -44,6 +45,7 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
     public static final String viewName = "BROWSE";
     private final BrowseViewModel viewModel;
     private BrowseController browseController = null;
+    private BrowsePresenter browsePresenter = null;
 
     public BrowseView(BrowseViewModel viewModel) {
         this.viewModel = viewModel;
@@ -340,6 +342,9 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         this.browseController = browseController;
     }
 
+    public void setBrowsePresenter(BrowsePresenter browsePresenter) {
+        this.browsePresenter = browsePresenter;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         final BrowseState browseState = viewModel.getState();
