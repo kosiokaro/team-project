@@ -1,7 +1,6 @@
 package view;
 
 import interface_adapter.browse.BrowseController;
-import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
 import use_case.browse.BrowseOutputData;
@@ -18,9 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.List;
 
-
 public class BrowseView extends JPanel implements PropertyChangeListener, ActionListener {
-    private BrowsePresenter browsePresenter;
     private static final Color PRIMARY_COLOR = new Color(99, 102, 241);
     private static final Color SECONDARY_COLOR = new Color(139, 92, 246);
     private static final Color BACKGROUND_COLOR = new Color(17, 24, 39);
@@ -31,7 +28,6 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
 
     private final JButton browseButton = new JButton("Search");
     private final JButton homepageButton = new JButton("Home");
-
     private final JTextField searchField = new JTextField(20);
     private final JComboBox<String> sortBox = new JComboBox<>(new String[]{
             "Rating ↑ (Ascending)",
@@ -53,10 +49,6 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         this.viewModel = viewModel;
         viewModel.addPropertyChangeListener(this);
         createUIComponents();
-    }
-
-    public void setBrowsePresenter(BrowsePresenter presenter) {
-        this.browsePresenter = presenter;
     }
 
     private void createUIComponents() {
@@ -319,9 +311,10 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         });
 
         addToWatchlistButton.addActionListener(e -> {
-            if (browsePresenter != null) {
-                browsePresenter.addToWatchList(movie.getMovieID());
-                JOptionPane.showMessageDialog(this, "Added \"" + movie.title + "\" to watchlist!");
+            int id = (int) card.getClientProperty("movieID");
+            System.out.println("Adding to watchlist - movie ID: " + id);
+            // Just placeholder
+        });
 
         card.add(addToWatchlistButton);
 
