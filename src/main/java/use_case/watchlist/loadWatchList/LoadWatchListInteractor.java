@@ -19,23 +19,23 @@ public class LoadWatchListInteractor implements LoadWatchListInputBoundaryData{
 
     @Override
     public void loadWatchlist(LoadWatchListInputData inputData) {
-        try {
-            ArrayList<Integer> movieIds = userDataAccess.getWatchlist(inputData.username);
-            ArrayList<Movie> movies = new ArrayList<>();
+        // try {
+        //     ArrayList<Integer> movieIds = userDataAccess.getWatchlist(inputData.username);
+        //     ArrayList<Movie> movies = new ArrayList<>();
 
-            for (Integer movieId : movieIds) {
-                Movie movie = movieDataAccess.getMovieById(movieId);
-                if (movie != null) {
-                    movies.add(movie);
-                }
-            }
+        //     for (Integer movieId : movieIds) {
+        //         Movie movie = movieDataAccess.getMovieById(movieId);
+        //         if (movie != null) {
+        //             movies.add(movie);
+        //         }
+        //     }
 
-            LoadWatchListOutputData outputData = new LoadWatchListOutputData(movies);
-            presenter.presentWatchlist(outputData);
+        //     LoadWatchListOutputData outputData = new LoadWatchListOutputData(movies);
+        //     presenter.presentWatchlist(outputData);
 
-        } catch (Exception e) {
-            presenter.presentError(e.getMessage());
-        }
+        // } catch (Exception e) {
+        //     presenter.presentError(e.getMessage());
+        // }
     }
 
 }
