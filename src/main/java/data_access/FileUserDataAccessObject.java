@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,29 +189,12 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         writeUserFile(user);
     }
 
-    public ArrayList<Integer> getWatchlist(String username) {
+    public List<Integer> getWatchlist(String username) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
         }
-
-        ArrayList<Integer> watchlist = user.getWatchlist();
-        System.out.println("Watchlist for " + username + ": " + watchlist);
-        System.out.println("Watchlist size: " + (watchlist != null ? watchlist.size() : "NULL"));
-
-        return watchlist;
-    }
-
-    @Override
-    public void updateWatchlist(String username, ArrayList<Integer> watchlist) {
-        User user = getUser(username);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + username);
-        }
-        // Clear and add all (since User doesn't have setWatchlist)
-        user.getWatchlist().clear();
-        user.getWatchlist().addAll(watchlist);
-        writeUserFile(user);
+        return user.getWatchlist();
     }
 
     // ==================== 收藏列表管理 ====================
