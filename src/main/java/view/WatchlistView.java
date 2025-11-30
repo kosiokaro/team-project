@@ -1,13 +1,24 @@
 package view;
 
-import interface_adapter.home.HomeState;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URL;
+import entity.Movie;
+
+import interface_adapter.watchlist.load.LoadWatchListController;
+import interface_adapter.watchlist.load.LoadWatchListState;
+import interface_adapter.watchlist.load.LoadWatchListViewModel;
+import interface_adapter.watchlist.WatchListController;
+
+public class WatchlistView extends JPanel implements PropertyChangeListener {
+    private final LoadWatchListViewModel loadViewModel;
+    private WatchListController controller;
+    private LoadWatchListController loadController;
+    private String currentUsername;
 
 public class WatchlistView extends JPanel {
     public final String viewName = "WATCHLIST";
