@@ -301,15 +301,26 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
         // Try to load poster image if available
         if (movieData != null && movieData.posterUrl != null && !movieData.posterUrl.equals("null")) {
-            try {
-                URL url = new URL(movieData.posterUrl);
-                ImageIcon icon = new ImageIcon(url);
-                Image scaled = icon.getImage().getScaledInstance(120, 180, Image.SCALE_SMOOTH);
-                posterLabel.setIcon(new ImageIcon(scaled));
-                posterLabel.setText("");
-            } catch (Exception e) {
-                System.out.println("Failed to load poster for movie " + id + ": " + e.getMessage());
-            }
+            final String urlString = movieData.posterUrl;
+            System.out.println("Loading poster: " + urlString);
+
+            // Load image in background thread
+            new Thread(() -> {
+                try {
+                    URL url = new URL(urlString);
+                    ImageIcon icon = new ImageIcon(url);
+
+                    // Update UI on EDT
+                    SwingUtilities.invokeLater(() -> {
+                        Image scaled = icon.getImage().getScaledInstance(120, 180, Image.SCALE_SMOOTH);
+                        posterLabel.setIcon(new ImageIcon(scaled));
+                        posterLabel.setText("");
+                        System.out.println("✓ Poster loaded for: " + title);
+                    });
+                } catch (Exception e) {
+                    System.out.println("Failed to load poster: " + e.getMessage());
+                }
+            }).start();
         }
 
         row.add(posterLabel, BorderLayout.WEST);
