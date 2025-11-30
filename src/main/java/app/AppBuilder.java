@@ -77,6 +77,8 @@ public class AppBuilder {
 
     private WatchlistView watchlistView;
     private LoadWatchListViewModel loadWatchListViewModel;
+    private LoadWatchListController loadWatchListController;
+    private ClickingView clickingView;
     private AddToWatchListViewModel addToWatchListViewModel;
     private DeleteFromWatchListViewModel deleteFromWatchListViewModel;
 
@@ -96,7 +98,6 @@ public class AppBuilder {
     private RandCSuccessSubmitView randCSuccessSubmitView;
     private RandCSuccessViewModel randCSuccessViewModel;
 
-    private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
     private ClickingController clickingController;
 
@@ -184,13 +185,11 @@ public class AppBuilder {
             viewManagerModel.firePropertyChange();
         });
 
-        watchlistView.setDetailsClickListener(movieId -> {
-            if (clickingController != null) {
-                clickingController.onClick(movieId);
-            } else {
-                System.err.println("ClickingController not initialized! Make sure addClickingUseCase() is called before addWatchlistView()");
-            }
-        });
+        if (clickingController != null) {
+            watchlistView.setClickingController(clickingController);
+        } else {
+            System.err.println("Warning: clickingController is null when setting up WatchlistView");
+        }
 
         return this;
     }
@@ -249,6 +248,22 @@ public class AppBuilder {
 
         // These two will use the actual view names (safer than hard-coded strings)
         homepageView.setWatchlistButtonListener(e -> {
+            System.out.println("=== Watchlist button clicked ===");
+            String username = homeViewModel.getState().getUsername();
+            System.out.println("Username: " + username);
+
+            if (AppBuilder.this.loadWatchListController != null && username != null && !username.isEmpty()) {
+                System.out.println("Loading watchlist for: " + username);
+
+                // Trigger the load (controller creates the InputData internally)
+                AppBuilder.this.loadWatchListController.loadWatchlist(username);
+            } else {
+                System.err.println("Cannot load watchlist - controller: " +
+                        (AppBuilder.this.loadWatchListController != null ? "SET" : "NULL") +
+                        ", username: " + (username != null ? username : "NULL"));
+            }
+
+            // Switch to watchlist view
             viewManagerModel.setState(watchlistView.getViewName());
             viewManagerModel.firePropertyChange();
         });
@@ -324,6 +339,9 @@ public class AppBuilder {
 
         final LoadWatchListController loadWatchListController =
                 new LoadWatchListController(loadWatchListInteractor);
+
+        this.loadWatchListController = new LoadWatchListController(loadWatchListInteractor);
+
 
         watchlistView.setLoadController(loadWatchListController);
         System.out.println("LoadWatchListController set on watchlistView");

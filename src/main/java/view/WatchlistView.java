@@ -10,6 +10,7 @@ import java.util.List;
 import java.net.URL;
 import entity.Movie;
 
+import interface_adapter.clicking.ClickingController;
 import interface_adapter.watchlist.load.LoadWatchListController;
 import interface_adapter.watchlist.load.LoadWatchListState;
 import interface_adapter.watchlist.load.LoadWatchListViewModel;
@@ -20,6 +21,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     private WatchListController controller;
     private LoadWatchListController loadController;
     private String currentUsername;
+    private ClickingController clickingController;
 
     public final String viewName = "WATCHLIST";
     private JLabel titleLabel;
@@ -38,7 +40,6 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
     // Store all media data for filtering
     private List<MediaCardData> allMediaData;
-    private java.util.function.Consumer<Integer> detailsClickListener;
 
 
     public WatchlistView(LoadWatchListViewModel loadViewModel) {
@@ -79,6 +80,10 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         buttonPanel.add(homeButton);
 
         this.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void setClickingController(ClickingController controller) {
+        this.clickingController = controller;
     }
 
     public void setCurrentUsername(String username) {
@@ -260,12 +265,6 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         allPanel.repaint();
     }
 
-    private void showMovieDetails(int movieId) {
-        if (detailsClickListener != null) {
-            detailsClickListener.accept(movieId);
-        }
-    }
-
     private JPanel createMediaListPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -428,10 +427,13 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         homeButton.addActionListener(listener);
     }
 
-    public void setDetailsClickListener(java.util.function.Consumer<Integer> listener) {
-        this.detailsClickListener = listener;
+    private void showMovieDetails(int movieId) {
+        if (clickingController != null) {
+            clickingController.onClick(movieId);
+        } else {
+            System.err.println("ClickingController is not set!");
+        }
     }
-
 
     public String getViewName() {
         return viewName;
