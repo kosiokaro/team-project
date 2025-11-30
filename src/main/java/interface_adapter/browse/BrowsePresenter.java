@@ -30,14 +30,9 @@ public class BrowsePresenter implements BrowseOutputBoundary {
         this.clickingController = clickingController;
     }
 
-    public void addToWatchList(int movieID) {
+    public void addToWatchList(int movieId) {
         if (watchListController != null && currentUsername != null) {
-            System.out.println("BrowsePresenter: Adding movie " + movieID + " to watchlist for user: " + currentUsername);
-            watchListController.addToWatchList(currentUsername, String.valueOf(movieID));
-        } else {
-            System.err.println("Cannot add to watchlist - WatchListController: " +
-                    (watchListController == null ? "NULL" : "SET") +
-                    ", Username: " + (currentUsername == null ? "NULL" : currentUsername));
+            watchListController.addToWatchList(currentUsername, String.valueOf(movieId));
         }
     }
 
