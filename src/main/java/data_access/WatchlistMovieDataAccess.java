@@ -18,6 +18,8 @@ public class WatchlistMovieDataAccess implements LoadWatchListDataAccessInterfac
 
     @Override
     public Movie getMovieById(int movieId) {
+        System.out.println("=== WatchlistMovieDataAccess.getMovieById called for ID: " + movieId + " ===");
+
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -51,16 +53,31 @@ public class WatchlistMovieDataAccess implements LoadWatchListDataAccessInterfac
                 int runtime = fullMovie.optInt("runtime", 0);
 
                 String posterUrl = fullMovie.optString("poster_path", null);
+                System.out.println("Raw poster_path from API: " + posterUrl);
+
                 if (posterUrl != null) {
                     posterUrl = "https://image.tmdb.org/t/p/w500" + posterUrl;
                 }
 
+                System.out.println("Final posterUrl: " + posterUrl);
+                System.out.println("Title: " + title);
+                System.out.println("Rating: " + rating);
+
                 String language = fullMovie.optString("original_language", "");
 
-                return new Movie(title, referenceNumber, genreNames, overview,
+                Movie movie = new Movie(title, referenceNumber, genreNames, overview,
                         rating, releaseDate, runtime, posterUrl, language);
+
+                System.out.println("✓ Movie object created successfully");
+                System.out.println("  - Movie.posterUrl: " + movie.posterUrl);
+                System.out.println("  - Movie.title: " + movie.title);
+
+                return movie;
+            } else {
+                System.err.println("API response not successful: " + response.code());
             }
         } catch (Exception e) {
+            System.err.println("Error in getMovieById: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
