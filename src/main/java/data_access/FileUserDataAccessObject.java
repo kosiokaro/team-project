@@ -190,7 +190,7 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         writeUserFile(user);
     }
 
-    public List<Integer> getWatchlist(String username) {
+    public ArrayList<Integer> getWatchlist(String username) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);
