@@ -1,6 +1,7 @@
 package view;
 
 import interface_adapter.browse.BrowseController;
+import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
 import interface_adapter.watchlist.AddToWatchListViewModel;
@@ -19,8 +20,7 @@ import java.net.URL;
 import java.util.List;
 
 public class BrowseView extends JPanel  implements PropertyChangeListener, ActionListener {
-    private WatchListController watchListController;
-    private String currentUsername;
+    private BrowsePresenter browsePresenter;
 
     public static final Color TOPBAR_BACKGROUND_COLOR = new Color(50, 50, 50);
     public static final Color BACKGROUND_COLOR = new Color(3, 9, 78);
@@ -57,8 +57,8 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         createUIComponents();
     }
 
-    public void setCurrentUsername(String username) {
-        this.currentUsername = username;
+    public void setBrowsePresenter(BrowsePresenter presenter) {
+        this.browsePresenter = presenter;
     }
 
     private void createUIComponents() {
@@ -118,10 +118,6 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         }
         gridPanel.revalidate();
         gridPanel.repaint();
-    }
-
-    public void setWatchListController(WatchListController controller) {
-        this.watchListController = controller;
     }
 
     private JPanel createMovieCard(BrowseOutputData.MovieCardData movie) {
@@ -185,8 +181,8 @@ public class BrowseView extends JPanel  implements PropertyChangeListener, Actio
         addToWatchlistBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         addToWatchlistBtn.setMaximumSize(new Dimension(120, 25));
         addToWatchlistBtn.addActionListener(e -> {
-            if (watchListController != null) {
-                watchListController.addToWatchList(currentUsername, String.valueOf(movie.getMovieID()));
+            if (browsePresenter != null) {
+                browsePresenter.addToWatchList(movie.getMovieID());
                 JOptionPane.showMessageDialog(this, "Added \"" + movie.title + "\" to watchlist!");
             }
         });

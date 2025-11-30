@@ -1,6 +1,7 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 import use_case.login.LoginOutputBoundary;
@@ -18,6 +19,7 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private WatchlistView watchlistView;
     private BrowseView browseView;
+    private BrowsePresenter browsePresenter;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
                           HomeViewModel homeViewModel, LoginViewModel loginViewModel) {
@@ -34,6 +36,10 @@ public class LoginPresenter implements LoginOutputBoundary {
         this.browseView = browseView;
     }
 
+    public void setBrowsePresenter(BrowsePresenter presenter) {
+        this.browsePresenter = presenter;
+    }
+
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         // On success, update the loggedInViewModel's state
@@ -46,10 +52,9 @@ public class LoginPresenter implements LoginOutputBoundary {
             watchlistView.setCurrentUsername(response.getUsername());
         }
 
-        if (browseView != null) {  // ← ADD THIS
-            browseView.setCurrentUsername(response.getUsername());
+        if (browsePresenter != null) {
+            browsePresenter.setCurrentUsername(response.getUsername());
         }
-
         // and clear everything from the LoginViewModel's state
         loginViewModel.setState(new LoginState());
 

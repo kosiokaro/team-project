@@ -83,6 +83,8 @@ public class AppBuilder {
 
     private BrowseView browseView;
     private BrowseViewModel browseViewModel;
+    private BrowsePresenter browsePresenter;
+
 
     private HomepageView homepageView;
     private HomeViewModel homeViewModel;
@@ -259,11 +261,13 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseUseCase(){
-        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
-        final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browseOutputBoundary);
+        BrowsePresenter browsePresenter = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
+        this.browsePresenter = browsePresenter;
 
+        final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browsePresenter);
         BrowseController browseController = new BrowseController(browseInputBoundary);
         browseView.setBrowseController(browseController);
+        browseView.setBrowsePresenter(browsePresenter);
         return this;
     }
 
@@ -283,6 +287,7 @@ public class AppBuilder {
                 homeViewModel, loginViewModel);
         loginPresenter.setWatchlistView(watchlistView);
         loginPresenter.setBrowseView(browseView);
+        loginPresenter.setBrowsePresenter(browsePresenter);
 
         final LoginInputBoundary loginInputBoundary = new LoginInteractor(userDataAccessObject,
                 loginPresenter);  // ← Use loginPresenter, not loginOutputBoundary
@@ -346,10 +351,7 @@ public class AppBuilder {
         // Set controller on watchlist view (for removing movies)
         watchlistView.setController(watchListController);
 
-        if (browseView != null) {
-            browseView.setWatchListController(watchListController);
-        }
-
+        browsePresenter.setWatchListController(watchListController);
         return this;
     }
 
