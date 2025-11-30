@@ -4,6 +4,7 @@ package app;
 import data_access.BrowseDataAccess;
 import data_access.ClickingDataAccessTMDb;
 import data_access.FileUserDataAccessObject;
+import data_access.FavoritesMovieDataAccess;
 
 
 import entity.MediaDetailsResponse;
@@ -23,9 +24,13 @@ import interface_adapter.rate_and_comment.CommentViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.favorites.*;
 import use_case.browse.BrowseInputBoundary;
 import use_case.browse.BrowseInteractor;
 import use_case.browse.BrowseOutputBoundary;
+import use_case.favorites.loadFavorites.LoadFavoritesInputBoundary;
+import use_case.favorites.loadFavorites.LoadFavoritesInteractor;
+import use_case.favorites.loadFavorites.LoadFavoritesOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -41,6 +46,14 @@ import use_case.rate_and_comment.CommentOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import use_case.favorites.addToFavorites.AddToFavoritesDataAccessInterface;
+import use_case.favorites.addToFavorites.AddToFavoritesInputBoundary;
+import use_case.favorites.addToFavorites.AddToFavoritesInteractor;
+import use_case.favorites.addToFavorites.AddToFavoritesOutputBoundary;
+import use_case.favorites.deleteFromFavorites.DeleteFromFavoritesDataAccessInterface;
+import use_case.favorites.deleteFromFavorites.DeleteFromFavoritesInputBoundary;
+import use_case.favorites.deleteFromFavorites.DeleteFromFavoritesInteractor;
+import use_case.favorites.deleteFromFavorites.DeleteFromFavoritesOutputBoundary;
 import view.*;
 
 import javax.swing.*;
@@ -61,7 +74,12 @@ public class AppBuilder {
     private LoginViewModel  loginViewModel;
 
     private WatchlistView watchlistView;
-    private FavoritesView favoritesView;
+
+    private TestFavoritesView testfavoritesView;
+    private LoadFavoritesViewModel loadfavoritesViewModel;
+    private AddToFavoritesViewModel addfavoritesViewModel;
+    private DeleteFromFavoritesViewModel deletefromfavoritesViewModel;
+    private FavoritesController favoritesController;
 
     private BrowseView browseView;
     private BrowseViewModel browseViewModel;
@@ -78,7 +96,8 @@ public class AppBuilder {
     private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
     private ClickingController clickingController;
-
+    private LoadFavoritesController loadFavoritesController;
+    private final FavoritesMovieDataAccess favoritesDataAccess = new FavoritesMovieDataAccess();
 
 
     public AppBuilder() {
@@ -91,6 +110,9 @@ public class AppBuilder {
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
         browseViewModel = new BrowseViewModel();
+        loadfavoritesViewModel = new LoadFavoritesViewModel();
+        addfavoritesViewModel = new AddToFavoritesViewModel();
+        deletefromfavoritesViewModel = new DeleteFromFavoritesViewModel();
     }
 
     public AppBuilder addSignUpView() {
@@ -111,25 +133,6 @@ public class AppBuilder {
 
         clickingView = new ClickingView(clickingViewModel,commentViewModel,viewManagerModel);
         cardPanel.add(clickingView, clickingView.getViewName());
-
-        ClickingDataAccessInterface dataAccess = new ClickingDataAccessTMDb();
-        new Thread(() -> {
-            MediaDetailsResponse movie = dataAccess.fetchDetailsById(550);
-            if (movie != null) {
-                SwingUtilities.invokeLater(() -> {
-                    ClickingState initState = clickingViewModel.getState();
-                    initState.setTitle(movie.getTitle());
-                    initState.setOverview(movie.getOverview());
-                    initState.setYear(movie.getReleaseYear());
-                    initState.setRating(Double.parseDouble(String.valueOf(movie.getRating())));
-                    initState.setLanguage(movie.getLanguage());
-                    initState.setGenres(movie.getGenres());
-                    initState.setPosterUrl(movie.getPosterUrl());
-                    clickingViewModel.firePropertyChange();
-                });
-            }
-        }).start();
-
         return this;
     }
 
@@ -151,7 +154,7 @@ public class AppBuilder {
         cardPanel.add(watchlistView, watchlistView.getViewName());
 
         watchlistView.setswitchtofavButtonListener(e -> {
-            viewManagerModel.setState(favoritesView.getViewName());
+            viewManagerModel.setState(testfavoritesView.getViewName());
             viewManagerModel.firePropertyChange();
         });
 
@@ -171,19 +174,72 @@ public class AppBuilder {
         return this;
     }
 
-    public AppBuilder addFavoritesView() {
-        favoritesView = new FavoritesView();
-        cardPanel.add(favoritesView, favoritesView.getViewName());
+    public AppBuilder addTestFavoritesView() {
+        testfavoritesView = new TestFavoritesView(loadfavoritesViewModel);
+        cardPanel.add(testfavoritesView, testfavoritesView.getViewName());
 
-        favoritesView.setswitchtowatchButtonListener(e -> {
+        // Set the load controller so the view can load favorites
+        if (loadFavoritesController != null) {
+            testfavoritesView.setLoadController(loadFavoritesController);
+        }
+
+        // Add this - set the favorites controller for remove functionality
+        if (favoritesController != null) {
+            testfavoritesView.setController(favoritesController);
+        }
+
+        testfavoritesView.setswitchtowatchButtonListener(e -> {
             viewManagerModel.setState(watchlistView.getViewName());
             viewManagerModel.firePropertyChange();
         });
 
-        favoritesView.sethomeButtonListener(e -> {
+        testfavoritesView.sethomeButtonListener(e -> {
             viewManagerModel.setState(homepageView.getViewName());
             viewManagerModel.firePropertyChange();
         });
+
+        testfavoritesView.setDetailsClickListener(movieId -> {
+            if (clickingController != null) {
+                clickingController.onClick(movieId);
+            }
+        });
+
+        return this;
+    }
+
+    public AppBuilder addFavoritesUseCase() {
+        // Use the shared instance
+        final AddToFavoritesOutputBoundary addPresenter =
+                new AddToFavoritesPresenter(addfavoritesViewModel);
+        final DeleteFromFavoritesOutputBoundary deletePresenter =
+                new DeleteFromFavoritesPresenter(deletefromfavoritesViewModel);
+
+        final AddToFavoritesInputBoundary addInteractor =
+                new AddToFavoritesInteractor(favoritesDataAccess, addPresenter);
+        final DeleteFromFavoritesInputBoundary deleteInteractor =
+                new DeleteFromFavoritesInteractor(favoritesDataAccess, deletePresenter);
+
+        this.favoritesController = new FavoritesController(addInteractor, deleteInteractor);
+        return this;
+    }
+
+    public AppBuilder addLoadFavoritesUseCase() {
+        // Use the same shared instance
+        final LoadFavoritesOutputBoundary loadPresenter =
+                new LoadFavoritesPresenter(loadfavoritesViewModel);
+
+        final LoadFavoritesInputBoundary loadInteractor =
+                new LoadFavoritesInteractor(
+                        favoritesDataAccess,  // Same instance!
+                        favoritesDataAccess,  // Same instance!
+                        loadPresenter
+                );
+
+        this.loadFavoritesController = new LoadFavoritesController(loadInteractor);
+
+        if (testfavoritesView != null) {
+            testfavoritesView.setLoadController(loadFavoritesController);
+        }
 
         return this;
     }
@@ -211,9 +267,14 @@ public class AppBuilder {
             viewManagerModel.setState(homepageView.getViewName());
             viewManagerModel.firePropertyChange();
         });
+
+        // ADD THIS (make sure addFavoritesUseCase is called before addBrowseView!)
+        if (favoritesController != null) {
+            browseView.setFavoritesController(favoritesController);
+        }
+
         return this;
     }
-
 
     public AppBuilder addHomepageView() {
 
@@ -224,6 +285,10 @@ public class AppBuilder {
         // For browse: you said it's "in progress" so either add a browse view
         // or use homepageView.getViewName() as a placeholder.
         homepageView.setBrowseButtonListener(e -> {
+            // Get username from home state and pass it to browse view
+            String username = homeViewModel.getState().getUsername();
+            browseView.setCurrentUsername(username);
+
             viewManagerModel.setState(browseView.getViewName());
             viewManagerModel.firePropertyChange();
         });
@@ -235,7 +300,12 @@ public class AppBuilder {
         });
 
         homepageView.setFavoritesButtonListener(e -> {
-            viewManagerModel.setState(favoritesView.getViewName());
+            String username = homeViewModel.getState().getUsername();
+            System.out.println("=== Favorites button clicked, username: " + username + " ===");
+
+            testfavoritesView.setCurrentUsername(username);
+
+            viewManagerModel.setState(testfavoritesView.getViewName());
             viewManagerModel.firePropertyChange();
         });
 
@@ -250,6 +320,8 @@ public class AppBuilder {
         browseView.setBrowseController(browseController);
         return this;
     }
+
+
 
     public AppBuilder addSignupUseCase(){
         final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
