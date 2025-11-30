@@ -26,14 +26,17 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     private JButton switchButton;
     private JButton homeButton;
 
+    // Filtering components
     private JTabbedPane filterTabs;
     private JPanel allPanel;
 
     private JComboBox<String> genreFilter;
     private JPanel filterPanel;
 
+    // Scroll panes
     private JScrollPane allScrollPane;
 
+    // Store all media data for filtering
     private List<MediaCardData> allMediaData;
     private java.util.function.Consumer<Integer> detailsClickListener;
 
@@ -83,6 +86,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         System.out.println("setCurrentUsername called with: " + username);
         System.out.println("loadController at this point: " + (loadController != null ? "NOT NULL" : "NULL"));
 
+        // Try to load, but if loadController isn't ready yet, we'll load on addNotify
         attemptLoad();
     }
 
@@ -100,6 +104,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     public void addNotify() {
         super.addNotify();
         System.out.println("WatchlistView.addNotify() called");
+        // Try to load when view becomes visible
         attemptLoad();
     }
 
@@ -121,12 +126,14 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
     public void setLoadController(LoadWatchListController controller) {
         this.loadController = controller;
+        System.out.println("setLoadController called, controller is: " + (controller != null ? "NOT NULL" : "NULL"));
     }
-
     public void loadWatchlist(List<Movie> movies) {
+        System.out.println("=== loadWatchlist called with " + (movies != null ? movies.size() : "NULL") + " movies ===");
         clearAllMedia();
 
         for (Movie movie : movies) {
+            // Skip movies with empty titles
             if (movie.getTitle() == null || movie.getTitle().trim().isEmpty()) {
                 System.out.println("Skipping movie with empty title, ID: " + movie.getReferenceNumber());
                 continue;
@@ -156,6 +163,11 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         System.out.println("\n=== loadWatchlist finished ===");
     }
 
+
+
+    /**
+     * Adds a movie to the watchlist
+     */
     public void addMediaCard(String title, int id, List<String> genres,
                              String description, double rating, String posterUrl) {
         System.out.println("=== addMediaCard called ===");
@@ -173,6 +185,8 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     public void setController(WatchListController controller) {
         this.controller = controller;
     }
+
+
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -199,6 +213,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         JLabel filterLabel = new JLabel("Filter by Genre:");
         filterLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
 
+        // Common TMDb movie genres
         String[] genres = {
                 "All Genres",
                 "Action",
@@ -228,8 +243,10 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
     private void filterByGenre() {
         String selectedGenre = (String) genreFilter.getSelectedItem();
 
+        // Clear panel
         allPanel.removeAll();
 
+        // Re-add filtered movies
         for (MediaCardData data : allMediaData) {
             if ("All Genres".equals(selectedGenre) || data.genres.contains(selectedGenre)) {
                 ActionListener detailsListener = e -> showMovieDetails(data.id);
@@ -238,6 +255,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
             }
         }
 
+        // Refresh panel
         allPanel.revalidate();
         allPanel.repaint();
     }
@@ -266,6 +284,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
         row.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        // Get the movie to access poster URL
         MediaCardData movieData = null;
         for (MediaCardData data : allMediaData) {
             if (data.id == id) {
@@ -274,12 +293,14 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
             }
         }
 
+        // Poster on the left
         JLabel posterLabel = new JLabel("POSTER", SwingConstants.CENTER);
         posterLabel.setPreferredSize(new Dimension(120, 180));
         posterLabel.setOpaque(true);
         posterLabel.setBackground(Color.LIGHT_GRAY);
         posterLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
+        // Try to load poster image if available
         if (movieData != null && movieData.posterUrl != null && !movieData.posterUrl.equals("null")) {
             try {
                 URL url = new URL(movieData.posterUrl);
@@ -294,10 +315,14 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
         row.add(posterLabel, BorderLayout.WEST);
 
+        // Details panel on the right
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        System.out.println("createMediaRow - title: " + title);
+        System.out.println("createMediaRow - description: " + (description != null ? description.substring(0, Math.min(50, description.length())) : "NULL"));
 
+        // Title
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -305,6 +330,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
 
         detailsPanel.add(Box.createVerticalStrut(5));
 
+        // Rating row
         JPanel metaPanel = new JPanel();
         metaPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
         metaPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -319,6 +345,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         detailsPanel.add(metaPanel);
         detailsPanel.add(Box.createVerticalStrut(5));
 
+        // Genres
         if (!genres.isEmpty()) {
             JPanel genrePanel = new JPanel();
             genrePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -338,6 +365,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
             detailsPanel.add(Box.createVerticalStrut(8));
         }
 
+        // Description
         if (description != null && !description.isEmpty()) {
             JTextArea descriptionArea = new JTextArea(description);
             descriptionArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -351,6 +379,7 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
             detailsPanel.add(Box.createVerticalStrut(8));
         }
 
+        // Action buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -381,6 +410,9 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         return row;
     }
 
+    /**
+     * Clears all movies from watchlist
+     */
     public void clearAllMedia() {
         allMediaData.clear();
         allPanel.removeAll();
@@ -400,10 +432,14 @@ public class WatchlistView extends JPanel implements PropertyChangeListener {
         this.detailsClickListener = listener;
     }
 
+
     public String getViewName() {
         return viewName;
     }
 
+    /**
+     * Inner class to store movie data
+     */
     private static class MediaCardData {
         String title;
         int id;
