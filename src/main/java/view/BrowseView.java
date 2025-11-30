@@ -4,6 +4,8 @@ import interface_adapter.browse.BrowseController;
 import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
+import interface_adapter.watchlist.AddToWatchListState;
+import interface_adapter.watchlist.AddToWatchListViewModel;
 import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
@@ -44,12 +46,25 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
 
     public static final String viewName = "BROWSE";
     private final BrowseViewModel viewModel;
+    private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
     private BrowsePresenter browsePresenter = null;
 
-    public BrowseView(BrowseViewModel viewModel) {
+    public BrowseView(BrowseViewModel viewModel,  AddToWatchListViewModel addToWatchListViewModel) {
         this.viewModel = viewModel;
+        this.addToWatchListViewModel = addToWatchListViewModel;
         viewModel.addPropertyChangeListener(this);
+        addToWatchListViewModel.addPropertyChangeListener(evt -> {
+            if ("state".equals(evt.getPropertyName())) {
+                AddToWatchListState state = (AddToWatchListState) evt.getNewValue();
+                if (state.getWasAdded()) {
+                    JOptionPane.showMessageDialog(BrowseView.this,
+                            "✓ Movie added to watchlist!",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
         createUIComponents();
     }
 

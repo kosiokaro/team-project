@@ -4,7 +4,6 @@ import use_case.watchlist.addToWatchList.AddToWatchListOutputData;
 import use_case.watchlist.addToWatchList.AddToWatchListOutputBoundary;
 
 public class AddToWatchListPresenter implements AddToWatchListOutputBoundary {
-
     private final AddToWatchListViewModel viewModel;
 
     public AddToWatchListPresenter(AddToWatchListViewModel viewModel) {
@@ -13,13 +12,16 @@ public class AddToWatchListPresenter implements AddToWatchListOutputBoundary {
 
     @Override
     public void presentSuccess(AddToWatchListOutputData outputData) {
-        viewModel.setState(outputData.getMessage());
+        final AddToWatchListState viewState = viewModel.getState();
+        viewState.setWasAdded(true);
         viewModel.firePropertyChange();
     }
 
     @Override
     public void presentError(String error) {
-        viewModel.setState(error);
+        System.err.println("Error adding to watchlist: " + error);
+        final AddToWatchListState viewState = viewModel.getState();
+        viewState.setWasAdded(false);
         viewModel.firePropertyChange();
     }
 }

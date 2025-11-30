@@ -228,7 +228,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseView(){
-        browseView = new BrowseView(browseViewModel);
+        browseView = new BrowseView(browseViewModel, addToWatchListViewModel);
         cardPanel.add(browseView, browseView.getViewName());
         return this;
     }
