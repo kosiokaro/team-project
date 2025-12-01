@@ -33,4 +33,14 @@ public interface LoginUserDataAccessInterface {
      */
     void setCurrentUser(String username);
 
+    /**
+     * Saves the user.
+     * @param username the of the user
+     * @param password the password of the user
+     * @param accountID the accountID of the user
+     */
+    void createUser(String username, String password, int accountID);
+
+    String getCurrentUser();
+
 }

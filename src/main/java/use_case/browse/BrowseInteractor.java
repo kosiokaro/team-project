@@ -25,6 +25,7 @@ public class BrowseInteractor implements BrowseInputBoundary {
                 if(browseInputData.sortAscending){builder.sortByRatingAsc();
                     System.out.println("Sort by Ascending");}
                 if(browseInputData.sortDescending){builder.sortByRatingDesc();}
+                builder.addMinimumRating();
 
             } else {
                 builder = new BrowseRequestBuilder(browseInputData.title);
@@ -49,16 +50,5 @@ public class BrowseInteractor implements BrowseInputBoundary {
         this.browsePresenter.prepareSelectMovieView(browseOutputData);
     }
 
-    @Override
-    public void addToFavorite(BrowseInputData browseInputData) {
-        //TODO: Implement
-    }
 
-    @Override
-    public void addToWatchlist(BrowseInputData browseInputData) {
-
-
-        //TODO: Implement
-
-    }
 }

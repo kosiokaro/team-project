@@ -1,6 +1,6 @@
 package use_case.watchlist.addToWatchList;
 
 public class AddToWatchListInputData {
-    public String refNumber;
+    public Integer refNumber;
     public String username;
 }

@@ -54,15 +54,9 @@ public class BrowseState {
 
     }
 
-    public void ClearSearch(){
-        this.searchState = new SearchTabState();
-    }
-
     public SearchTabState getSearchState() {
         return searchState;
     }
-
-
 
     public List<BrowseOutputData.MovieCardData> getMovies(int page) {
         return movieCards.get(page-1);

@@ -2,9 +2,11 @@ package interface_adapter.browse;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingController;
+import interface_adapter.watchlist.WatchListController;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
 import interface_adapter.login.LoginState;
+import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputBoundary;
 import use_case.browse.BrowseOutputData;
 import use_case.clicking.ClickingInteractor;
@@ -24,9 +26,7 @@ public class BrowsePresenter implements BrowseOutputBoundary {
         this.viewManagerModel = viewManagerModel;
         this.clickingViewModel = clickingViewModel;
         this.clickingController = clickingController;
-
     }
-
 
     @Override
     public void populateView(BrowseOutputData browseOutputData) {
@@ -46,7 +46,6 @@ public class BrowsePresenter implements BrowseOutputBoundary {
 
         int movieID = browseOutputData.getMovies().get(0).getMovieID();
         System.out.println("passed on: " + movieID);
-
         this.viewManagerModel.setState(clickingViewModel.getViewName());
         this.clickingController.onClick(movieID);
         this.clickingViewModel.firePropertyChange();

@@ -10,8 +10,9 @@ public class BrowseRequestBuilder {
     }
 
     public BrowseRequestBuilder(String query){
+        String updatedQuery = query.replace(" ","%20");
         this.request = new StringBuilder();
-        this.request.append("https://api.themoviedb.org/3/search/movie?query=").append(query).append("&include_adult=false&language=en-US");
+        this.request.append("https://api.themoviedb.org/3/search/movie?query=").append(updatedQuery).append("&include_adult=false&language=en-US");
     }
 
     public BrowseRequestBuilder(int MovieID){
@@ -38,6 +39,10 @@ public class BrowseRequestBuilder {
 
     public void  sortByRatingDesc(){
         request.append("&sort_by=vote_average.desc");
+    }
+
+    public void addMinimumRating(){
+        request.append("&vote_count.gte=1000");
     }
 
 }

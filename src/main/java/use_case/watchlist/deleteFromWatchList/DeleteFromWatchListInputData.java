@@ -1,6 +1,6 @@
 package use_case.watchlist.deleteFromWatchList;
 
 public class DeleteFromWatchListInputData {
-    public String refNumber;
+    public Integer refNumber;
     public String username;
 }

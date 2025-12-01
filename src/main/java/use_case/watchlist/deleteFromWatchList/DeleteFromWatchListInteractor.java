@@ -14,12 +14,12 @@ public class DeleteFromWatchListInteractor implements DeleteFromWatchListInputBo
 
     public void deleteFromWatchlist(DeleteFromWatchListInputData input) {
         try {
-            String refNumber = input.refNumber;
+            Integer refNumber = input.refNumber;
             String username = input.username;
-            this.dataAccessObject.deleteFromWatchlist(username, Integer.parseInt(refNumber));
+            this.dataAccessObject.deleteFromWatchlist(username, refNumber);
 
             DeleteFromWatchListOutputData outputData = new DeleteFromWatchListOutputData(
-                    input.username, Integer.parseInt(refNumber), "Movie removed successfully");
+                    input.username, refNumber, "Movie removed successfully");
             presenter.presentSuccess(outputData);
         } catch (Exception e) {
             presenter.presentError(e.getMessage());

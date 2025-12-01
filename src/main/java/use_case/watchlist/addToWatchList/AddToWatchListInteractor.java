@@ -2,28 +2,28 @@ package use_case.watchlist.addToWatchList;
 
 public class AddToWatchListInteractor implements AddToWatchListInputBoundaryData {
 
-
     private final AddToWatchListDataAccessInterface dataAccessObject;
-    private final AddToWatchListOutputBoundary presenter; // Assuming you have a presenter
+    private final AddToWatchListOutputBoundary presenter;
 
-
-    public AddToWatchListInteractor(AddToWatchListDataAccessInterface dataAccessObject, AddToWatchListOutputBoundary presenter) {
+    public AddToWatchListInteractor(AddToWatchListDataAccessInterface dataAccessObject,
+                                    AddToWatchListOutputBoundary presenter) {
         this.dataAccessObject = dataAccessObject;
         this.presenter = presenter;
-
     }
 
     public void addMovieToWatchlist(AddToWatchListInputData input) {
         try {
-            String refNumber = input.refNumber;
+
+            Integer movieId = input.refNumber;
             String username = input.username;
-            this.dataAccessObject.addMovieToWatchlist(username, Integer.parseInt(refNumber));
+            this.dataAccessObject.addMovieToWatchlist(username, movieId);
 
             AddToWatchListOutputData outputData = new AddToWatchListOutputData(
-                    input.username, Integer.parseInt(refNumber), "Movie added successfully");
+                    username, movieId, "Movie added successfully");
             presenter.presentSuccess(outputData);
         } catch (Exception e) {
+            e.printStackTrace();
             presenter.presentError(e.getMessage());
         }
-        }
+    }
 }

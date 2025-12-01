@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +190,7 @@ public class FileUserDataAccessObject implements CommentUserDataAccessInterface,
         writeUserFile(user);
     }
 
-    public List<Integer> getWatchlist(String username) {
+    public ArrayList<Integer> getWatchlist(String username) {
         User user = getUser(username);
         if (user == null) {
             throw new RuntimeException("User not found: " + username);

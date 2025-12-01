@@ -8,8 +8,5 @@ public interface BrowseInputBoundary {
 
     void selectMovie(BrowseInputData browseInputData);
 
-    void addToFavorite(BrowseInputData browseInputData);
-
-    void addToWatchlist(BrowseInputData browseInputData);
 
 }
