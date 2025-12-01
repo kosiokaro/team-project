@@ -21,7 +21,6 @@ public class BrowsePresenter implements BrowseOutputBoundary {
     private final ClickingController  clickingController;
 
 
-
     public BrowsePresenter(BrowseViewModel browseViewModel, ViewManagerModel viewManagerModel,ClickingViewModel clickingViewModel, ClickingController clickingController) {
         this.browseViewModel = browseViewModel;
         this.viewManagerModel = viewManagerModel;
@@ -47,7 +46,6 @@ public class BrowsePresenter implements BrowseOutputBoundary {
 
         int movieID = browseOutputData.getMovies().get(0).getMovieID();
         System.out.println("passed on: " + movieID);
-
         this.viewManagerModel.setState(clickingViewModel.getViewName());
         this.clickingController.onClick(movieID);
         this.clickingViewModel.firePropertyChange();
