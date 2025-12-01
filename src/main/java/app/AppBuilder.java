@@ -467,7 +467,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(loginView.getViewName());
+                viewManagerModel.setState(signupView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });

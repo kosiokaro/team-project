@@ -1,7 +1,6 @@
-package favorites;
+package use_case.favorites.addToFavorites;
 
 import org.junit.jupiter.api.Test;
-import use_case.favorites.addToFavorites.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +11,7 @@ class AddToFavoritesInteractorTest {
         AddToFavoritesInputData inputData =
                 new AddToFavoritesInputData();
         inputData.username = "user123";
-        inputData.refNumber = "900667";
+        inputData.refNumber = 900667;
 
         AddToFavoritesDataAccessInterface repository =
                 mock(AddToFavoritesDataAccessInterface.class);
@@ -41,42 +40,11 @@ class AddToFavoritesInteractorTest {
     }
 
     @Test
-    void failureInvalidRefNumberTest() {
-        AddToFavoritesInputData inputData =
-                new AddToFavoritesInputData();
-        inputData.username = "user123";
-        inputData.refNumber = "not-a-number";
-
-        AddToFavoritesDataAccessInterface repository =
-                mock(AddToFavoritesDataAccessInterface.class);
-
-        AddToFavoritesOutputBoundary failurePresenter = new AddToFavoritesOutputBoundary() {
-            @Override
-            public void presentSuccess(AddToFavoritesOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void presentError(String errorMessage) {
-                assertNotNull(errorMessage);
-            }
-        };
-
-        AddToFavoritesInputBoundary interactor =
-                new AddToFavoritesInteractor(repository, failurePresenter);
-
-        interactor.addMovieToFavorites(inputData);
-
-        verify(repository, never())
-                .addMovieToFavorites(anyString(), anyInt());
-    }
-
-    @Test
     void failureRepositoryThrowsExceptionTest() {
         AddToFavoritesInputData inputData =
                 new AddToFavoritesInputData();
         inputData.username = "user123";
-        inputData.refNumber = "900667";
+        inputData.refNumber = 900667;
 
         AddToFavoritesDataAccessInterface repository =
                 mock(AddToFavoritesDataAccessInterface.class);
