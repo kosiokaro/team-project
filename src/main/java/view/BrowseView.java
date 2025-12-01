@@ -7,6 +7,8 @@ import interface_adapter.browse.BrowseViewModel;
 import interface_adapter.watchlist.AddToWatchListState;
 import interface_adapter.watchlist.AddToWatchListViewModel;
 import interface_adapter.watchlist.WatchListController;
+import interface_adapter.favorites.AddToFavoritesViewModel;
+import interface_adapter.favorites.FavoritesController;
 import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
@@ -50,6 +52,8 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
     private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
     private WatchListController watchListController = null;
+    private FavoritesController favoritesController = null;
+    private String currentUsername;
 
     private String currentUsername;
 
@@ -69,6 +73,14 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
             }
         });
         createUIComponents();
+    }
+
+    public void setFavoritesController(FavoritesController favoritesController) {
+        this.favoritesController = favoritesController;
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
     }
 
     private void createUIComponents() {
@@ -341,6 +353,43 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         });
 
         card.add(addToWatchlistButton);
+
+        card.add(Box.createVerticalStrut(5));
+
+        // Add to Favorites button
+        JButton addToFavoritesButton = new JButton("+ Favorites");
+        addToFavoritesButton.setBackground(PRIMARY_COLOR);
+        addToFavoritesButton.setForeground(Color.WHITE);
+        addToFavoritesButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        addToFavoritesButton.setFocusPainted(false);
+        addToFavoritesButton.setBorderPainted(false);
+        addToFavoritesButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addToFavoritesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addToFavoritesButton.setMaximumSize(new Dimension(150, 35));
+
+        addToFavoritesButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                addToFavoritesButton.setBackground(SECONDARY_COLOR);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                addToFavoritesButton.setBackground(PRIMARY_COLOR);
+            }
+        });
+
+        addToFavoritesButton.addActionListener(e -> {
+            int id = (int) card.getClientProperty("movieID");
+            if (favoritesController != null && currentUsername != null) {
+                System.out.println("Adding to favorites - movie ID: " + id);
+                favoritesController.addToFavorites(currentUsername, String.valueOf(id));
+            } else {
+                System.err.println("FavoritesController or username not set!");
+            }
+        });
+
+        card.add(addToFavoritesButton);
 
         return card;
     }

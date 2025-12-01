@@ -8,6 +8,7 @@ import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 import view.BrowseView;
 import view.WatchlistView;
+import view.TestFavoritesView;
 
 /**
  * The Presenter for the Login Use Case.
@@ -20,6 +21,7 @@ public class LoginPresenter implements LoginOutputBoundary {
     private WatchlistView watchlistView;
     private BrowseView browseView;
     private BrowsePresenter browsePresenter;
+    private TestFavoritesView testFavoritesView;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
                           HomeViewModel homeViewModel, LoginViewModel loginViewModel) {
@@ -39,6 +41,9 @@ public class LoginPresenter implements LoginOutputBoundary {
     public void setBrowsePresenter(BrowsePresenter presenter) {
         this.browsePresenter = presenter;
     }
+    public void setTestFavoritesView(TestFavoritesView testFavoritesView) {
+        this.testFavoritesView = testFavoritesView;
+    }
 
     @Override
     public void prepareSuccessView(LoginOutputData response) {
@@ -50,6 +55,13 @@ public class LoginPresenter implements LoginOutputBoundary {
 
         if (watchlistView != null) {
             watchlistView.setCurrentUsername(response.getUsername());
+        }
+        if (testFavoritesView != null) {
+            testFavoritesView.setCurrentUsername(response.getUsername());
+        }
+
+        if (browseView != null) {  // ← ADD THIS
+            browseView.setCurrentUsername(response.getUsername());
         }
 
         // and clear everything from the LoginViewModel's state
