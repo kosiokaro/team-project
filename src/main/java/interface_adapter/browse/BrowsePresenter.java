@@ -2,9 +2,11 @@ package interface_adapter.browse;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.clicking.ClickingController;
+import interface_adapter.watchlist.WatchListController;
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingViewModel;
 import interface_adapter.login.LoginState;
+import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputBoundary;
 import use_case.browse.BrowseOutputData;
 import use_case.clicking.ClickingInteractor;
@@ -19,14 +21,13 @@ public class BrowsePresenter implements BrowseOutputBoundary {
     private final ClickingController  clickingController;
 
 
+
     public BrowsePresenter(BrowseViewModel browseViewModel, ViewManagerModel viewManagerModel,ClickingViewModel clickingViewModel, ClickingController clickingController) {
         this.browseViewModel = browseViewModel;
         this.viewManagerModel = viewManagerModel;
         this.clickingViewModel = clickingViewModel;
         this.clickingController = clickingController;
-
     }
-
 
     @Override
     public void populateView(BrowseOutputData browseOutputData) {

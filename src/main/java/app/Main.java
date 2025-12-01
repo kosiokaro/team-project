@@ -8,6 +8,8 @@ public class Main {
         JFrame application = appBuilder
                 .addLoginView()
                 .addSignUpView()
+                .addClickingView()
+                .addClickingUseCase()
                 .addHomepageView()
                 .addWatchlistView()
                 .addLoadFavoritesUseCase()
@@ -22,8 +24,8 @@ public class Main {
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addCommentUseCase()
-                .addClickingUseCase()
-                .addBrowseUseCase()
+                .addLoadWatchListUseCase()
+                .addWatchListUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

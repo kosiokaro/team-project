@@ -2,21 +2,17 @@ package interface_adapter.watchlist;
 
 import interface_adapter.ViewModel;
 
-public class AddToWatchListViewModel extends ViewModel<String> {
-
+public class AddToWatchListViewModel extends ViewModel<AddToWatchListState> {
     public AddToWatchListViewModel() {
         super("addToWatchlist");
+        setState(new AddToWatchListState());
     }
 
-    public String getMessage() {
-        return getState();
+    public AddToWatchListState getState() {
+        return super.getState();
     }
 
-    public void setMessage(String message) {
-        setState(message);
-    }
-
-    public void firePropertyChanged() {
-        firePropertyChange();
+    public void setState(AddToWatchListState state) {
+        super.setState(state);
     }
 }

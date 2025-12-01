@@ -1,8 +1,12 @@
 package view;
 
 import interface_adapter.browse.BrowseController;
+import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
+import interface_adapter.watchlist.AddToWatchListState;
+import interface_adapter.watchlist.AddToWatchListViewModel;
+import interface_adapter.watchlist.WatchListController;
 import interface_adapter.favorites.AddToFavoritesViewModel;
 import interface_adapter.favorites.FavoritesController;
 import use_case.browse.BrowseOutputData;
@@ -45,13 +49,29 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
 
     public static final String viewName = "BROWSE";
     private final BrowseViewModel viewModel;
+    private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
+    private WatchListController watchListController = null;
     private FavoritesController favoritesController = null;
     private String currentUsername;
 
-    public BrowseView(BrowseViewModel viewModel) {
+    private String currentUsername;
+
+    public BrowseView(BrowseViewModel viewModel,  AddToWatchListViewModel addToWatchListViewModel) {
         this.viewModel = viewModel;
+        this.addToWatchListViewModel = addToWatchListViewModel;
         viewModel.addPropertyChangeListener(this);
+        addToWatchListViewModel.addPropertyChangeListener(evt -> {
+            if ("state".equals(evt.getPropertyName())) {
+                AddToWatchListState state = (AddToWatchListState) evt.getNewValue();
+                if (state.getWasAdded()) {
+                    JOptionPane.showMessageDialog(BrowseView.this,
+                            "✓ Movie added to watchlist!",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
         createUIComponents();
     }
 
@@ -325,7 +345,11 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         addToWatchlistButton.addActionListener(e -> {
             int id = (int) card.getClientProperty("movieID");
             System.out.println("Adding to watchlist - movie ID: " + id);
-            // Just placeholder
+            if (watchListController != null && currentUsername != null) {
+                watchListController.addToWatchList(currentUsername, String.valueOf(id));  // ✅ Call controller
+            } else {
+                System.err.println("ERROR: WatchListController is NULL or username is NULL!");
+            }
         });
 
         card.add(addToWatchlistButton);
@@ -389,6 +413,13 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         this.browseController = browseController;
     }
 
+    public void setWatchListController(WatchListController controller) {
+        this.watchListController = controller;
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         final BrowseState browseState = viewModel.getState();

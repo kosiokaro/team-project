@@ -7,6 +7,7 @@ import data_access.FileUserDataAccessObject;
 import data_access.FavoritesMovieDataAccess;
 
 
+import data_access.WatchlistMovieDataAccess;
 import entity.MediaDetailsResponse;
 import interface_adapter.RandC_success_submit.RandCSuccessViewModel;
 import interface_adapter.ViewManagerModel;
@@ -24,16 +25,19 @@ import interface_adapter.rate_and_comment.CommentViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
-import interface_adapter.favorites.*;
+import interface_adapter.watchlist.*;
+import interface_adapter.watchlist.load.LoadWatchListController;
+import interface_adapter.watchlist.load.LoadWatchListPresenter;
+import interface_adapter.watchlist.load.LoadWatchListViewModel;
 import use_case.browse.BrowseInputBoundary;
 import use_case.browse.BrowseInteractor;
+import interface_adapter.favorites.*;
 import use_case.browse.BrowseOutputBoundary;
 import use_case.favorites.loadFavorites.LoadFavoritesInputBoundary;
 import use_case.favorites.loadFavorites.LoadFavoritesInteractor;
 import use_case.favorites.loadFavorites.LoadFavoritesOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
-import use_case.login.LoginOutputBoundary;
 
 import interface_adapter.clicking.ClickingState;
 import interface_adapter.clicking.ClickingPresenter;
@@ -46,6 +50,18 @@ import use_case.rate_and_comment.CommentOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import use_case.watchlist.addToWatchList.AddToWatchListDataAccessInterface;
+import use_case.watchlist.addToWatchList.AddToWatchListInputBoundaryData;
+import use_case.watchlist.addToWatchList.AddToWatchListInteractor;
+import use_case.watchlist.addToWatchList.AddToWatchListOutputBoundary;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListDataAccessInterface;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListInputBoundaryData;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListInteractor;
+import use_case.watchlist.deleteFromWatchList.DeleteFromWatchListOutputBoundary;
+import use_case.watchlist.loadWatchList.LoadWatchListDataAccessInterface;
+import use_case.watchlist.loadWatchList.LoadWatchListInputBoundaryData;
+import use_case.watchlist.loadWatchList.LoadWatchListInteractor;
+import use_case.watchlist.loadWatchList.LoadWatchListOutputBoundaryData;
 import use_case.favorites.addToFavorites.AddToFavoritesDataAccessInterface;
 import use_case.favorites.addToFavorites.AddToFavoritesInputBoundary;
 import use_case.favorites.addToFavorites.AddToFavoritesInteractor;
@@ -74,6 +90,13 @@ public class AppBuilder {
     private LoginViewModel  loginViewModel;
 
     private WatchlistView watchlistView;
+    private LoadWatchListViewModel loadWatchListViewModel;
+    private LoadWatchListController loadWatchListController;
+    private ClickingView clickingView;
+    private AddToWatchListViewModel addToWatchListViewModel;
+    private DeleteFromWatchListViewModel deleteFromWatchListViewModel;
+
+    private FavoritesView favoritesView;
 
     private TestFavoritesView testfavoritesView;
     private LoadFavoritesViewModel loadfavoritesViewModel;
@@ -83,6 +106,8 @@ public class AppBuilder {
 
     private BrowseView browseView;
     private BrowseViewModel browseViewModel;
+    private BrowsePresenter browsePresenter;
+
 
     private HomepageView homepageView;
     private HomeViewModel homeViewModel;
@@ -93,7 +118,6 @@ public class AppBuilder {
     private RandCSuccessSubmitView randCSuccessSubmitView;
     private RandCSuccessViewModel randCSuccessViewModel;
 
-    private ClickingView clickingView;
     private ClickingViewModel clickingViewModel;
     private ClickingController clickingController;
     private LoadFavoritesController loadFavoritesController;
@@ -110,6 +134,9 @@ public class AppBuilder {
         randCSuccessViewModel = new RandCSuccessViewModel();
         homeViewModel = new HomeViewModel();
         browseViewModel = new BrowseViewModel();
+        loadWatchListViewModel = new LoadWatchListViewModel();
+        addToWatchListViewModel = new AddToWatchListViewModel();
+        deleteFromWatchListViewModel = new DeleteFromWatchListViewModel();
         loadfavoritesViewModel = new LoadFavoritesViewModel();
         addfavoritesViewModel = new AddToFavoritesViewModel();
         deletefromfavoritesViewModel = new DeleteFromFavoritesViewModel();
@@ -150,7 +177,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addWatchlistView() {
-        watchlistView = new WatchlistView();
+        watchlistView = new WatchlistView(loadWatchListViewModel);
         cardPanel.add(watchlistView, watchlistView.getViewName());
 
         watchlistView.setswitchtofavButtonListener(e -> {
@@ -163,13 +190,11 @@ public class AppBuilder {
             viewManagerModel.firePropertyChange();
         });
 
-        watchlistView.setDetailsClickListener(movieId -> {
-            if (clickingController != null) {
-                clickingController.onClick(movieId);
-            } else {
-                System.err.println("ClickingController not initialized! Make sure addClickingUseCase() is called before addWatchlistView()");
-            }
-        });
+        if (clickingController != null) {
+            watchlistView.setClickingController(clickingController);
+        } else {
+            System.err.println("Warning: clickingController is null when setting up WatchlistView");
+        }
 
         return this;
     }
@@ -260,7 +285,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseView(){
-        browseView = new BrowseView(browseViewModel);
+        browseView = new BrowseView(browseViewModel, addToWatchListViewModel);
         cardPanel.add(browseView, browseView.getViewName());
 
         browseView.setHomeButtonListener(e -> {
@@ -295,6 +320,22 @@ public class AppBuilder {
 
         // These two will use the actual view names (safer than hard-coded strings)
         homepageView.setWatchlistButtonListener(e -> {
+            System.out.println("=== Watchlist button clicked ===");
+            String username = homeViewModel.getState().getUsername();
+            System.out.println("Username: " + username);
+
+            if (AppBuilder.this.loadWatchListController != null && username != null && !username.isEmpty()) {
+                System.out.println("Loading watchlist for: " + username);
+
+                // Trigger the load (controller creates the InputData internally)
+                AppBuilder.this.loadWatchListController.loadWatchlist(username);
+            } else {
+                System.err.println("Cannot load watchlist - controller: " +
+                        (AppBuilder.this.loadWatchListController != null ? "SET" : "NULL") +
+                        ", username: " + (username != null ? username : "NULL"));
+            }
+
+            // Switch to watchlist view
             viewManagerModel.setState(watchlistView.getViewName());
             viewManagerModel.firePropertyChange();
         });
@@ -313,9 +354,10 @@ public class AppBuilder {
     }
 
     public AppBuilder addBrowseUseCase(){
-        final BrowseOutputBoundary browseOutputBoundary = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
-        final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browseOutputBoundary);
+        BrowsePresenter browsePresenter = new BrowsePresenter(browseViewModel,viewManagerModel,clickingViewModel,clickingController);
+        this.browsePresenter = browsePresenter;
 
+        final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browsePresenter);
         BrowseController browseController = new BrowseController(browseInputBoundary);
         browseView.setBrowseController(browseController);
         return this;
@@ -335,10 +377,14 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoginUseCase(){
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
+        final LoginPresenter loginPresenter = new LoginPresenter(viewManagerModel,
                 homeViewModel, loginViewModel);
+        loginPresenter.setWatchlistView(watchlistView);
+        loginPresenter.setBrowseView(browseView);
+        loginPresenter.setBrowsePresenter(browsePresenter);
+
         final LoginInputBoundary loginInputBoundary = new LoginInteractor(userDataAccessObject,
-                loginOutputBoundary);
+                loginPresenter);  // ← Use loginPresenter, not loginOutputBoundary
 
         LoginController loginController = new LoginController(loginInputBoundary);
         loginView.setLoginController(loginController);
@@ -356,6 +402,59 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addLoadWatchListUseCase() {
+        // Movie data access (for fetching movie details from API)
+        final LoadWatchListDataAccessInterface loadWatchListDataAccess =
+                new WatchlistMovieDataAccess("Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM");
+
+        final AddToWatchListDataAccessInterface userDataAccess = userDataAccessObject;
+
+        final LoadWatchListOutputBoundaryData loadWatchListPresenter =
+                new LoadWatchListPresenter(loadWatchListViewModel);
+
+        final LoadWatchListInputBoundaryData loadWatchListInteractor =
+                new LoadWatchListInteractor(userDataAccess, loadWatchListDataAccess, loadWatchListPresenter);
+
+        final LoadWatchListController loadWatchListController =
+                new LoadWatchListController(loadWatchListInteractor);
+
+        this.loadWatchListController = new LoadWatchListController(loadWatchListInteractor);
+
+
+        watchlistView.setLoadController(loadWatchListController);
+        System.out.println("LoadWatchListController set on watchlistView");
+
+        return this;
+    }
+
+    public AppBuilder addWatchListUseCase() {
+        // Add to watchlist
+        final AddToWatchListDataAccessInterface addToWatchListDataAccess = userDataAccessObject;
+        final AddToWatchListOutputBoundary addToWatchListPresenter =
+                new AddToWatchListPresenter(addToWatchListViewModel);
+        final AddToWatchListInputBoundaryData addToWatchListInteractor =
+                new AddToWatchListInteractor(addToWatchListDataAccess, addToWatchListPresenter);
+
+        final DeleteFromWatchListDataAccessInterface deleteFromWatchListDataAccess = userDataAccessObject;
+        final DeleteFromWatchListOutputBoundary deleteFromWatchListPresenter =
+                new DeleteFromWatchListPresenter(deleteFromWatchListViewModel);
+        final DeleteFromWatchListInputBoundaryData deleteFromWatchListInteractor =
+                new DeleteFromWatchListInteractor(deleteFromWatchListDataAccess, deleteFromWatchListPresenter);
+
+        // Create single controller with BOTH interactors
+        final WatchListController watchListController =
+                new WatchListController(addToWatchListInteractor, deleteFromWatchListInteractor);
+
+        // Set controller on watchlist view (for removing movies)
+        watchlistView.setController(watchListController);
+
+        watchlistView.setController(watchListController);
+        browseView.setWatchListController(watchListController);
+        return this;
+    }
+
+
+
     public JFrame build() {
         final JFrame application = new JFrame("Movie App");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -368,7 +467,7 @@ public class AppBuilder {
 
         SwingUtilities.invokeLater(() -> {
             if (clickingView != null) {
-                viewManagerModel.setState(homepageView.getViewName());
+                viewManagerModel.setState(loginView.getViewName());
                 viewManagerModel.firePropertyChange();
             }
         });
