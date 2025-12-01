@@ -10,7 +10,7 @@ public class ClickingOutputData {
     private final String posterUrl;
     private final int releaseYear;
     private final double rating;
-    private final List<String> genres;
+    public final List<String> genres;
 
     public ClickingOutputData(String title, String overview, String language,
                               double rating, int releaseYear, String posterUrl, List<String> genres) {
@@ -35,16 +35,16 @@ public class ClickingOutputData {
         return language;
     }
 
-    public String getPosterUrl() {
-        return posterUrl;
+    public double getRating() {
+        return rating;
     }
 
     public int getReleaseYear() {
         return releaseYear;
     }
 
-    public double getRating() {
-        return rating;
+    public String getPosterUrl() {
+        return posterUrl;
     }
 
     public List<String> getGenres() {
