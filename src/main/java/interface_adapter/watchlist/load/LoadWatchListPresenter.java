@@ -18,8 +18,7 @@ public class LoadWatchListPresenter implements LoadWatchListOutputBoundaryData {
     }
 
     public void presentError(String error) {
-//        viewModel.setMovies(new ArrayList<>());
-//        viewModel.firePropertyChange("error");
+
     }
 }
 
