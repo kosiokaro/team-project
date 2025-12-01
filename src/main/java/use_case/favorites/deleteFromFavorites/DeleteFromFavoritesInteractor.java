@@ -11,12 +11,12 @@ public class DeleteFromFavoritesInteractor implements  DeleteFromFavoritesInputB
 
     public void deleteFromFavorites(DeleteFromFavoritesInputData input) {
         try {
-            String refNumber = input.refNumber;
+            Integer refNumber = input.refNumber;
             String username = input.username;
-            this.dataAccessObject.deleteFromFavorites(username, Integer.parseInt(refNumber));
+            this.dataAccessObject.deleteFromFavorites(username, refNumber);
 
             DeleteFromFavoritesOutputData outputData = new DeleteFromFavoritesOutputData(
-                    input.username, Integer.parseInt(refNumber), "Movie removed successfully");
+                    input.username, refNumber, "Movie removed successfully");
             presenter.presentSuccess(outputData);
         } catch (Exception e) {
             presenter.presentError(e.getMessage());

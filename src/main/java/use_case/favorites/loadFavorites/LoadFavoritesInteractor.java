@@ -37,5 +37,4 @@ public class LoadFavoritesInteractor implements LoadFavoritesInputBoundary{
             presenter.presentError(e.getMessage());
         }
     }
-
 }

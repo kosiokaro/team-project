@@ -11,12 +11,12 @@ public class AddToFavoritesInteractor implements AddToFavoritesInputBoundary {
 
     public void addMovieToFavorites(AddToFavoritesInputData input) {
         try {
-            String refNumber = input.refNumber;
+            Integer refNumber = input.refNumber;
             String username = input.username;
-            this.dataAccessObject.addMovieToFavorites(username, Integer.parseInt(refNumber));
+            this.dataAccessObject.addMovieToFavorites(username, refNumber);
 
             AddToFavoritesOutputData outputData = new AddToFavoritesOutputData(
-                    input.username, Integer.parseInt(refNumber), "Movie added successfully");
+                    input.username, refNumber, "Movie added successfully");
             presenter.presentSuccess(outputData);
         } catch (Exception e) {
             presenter.presentError(e.getMessage());

@@ -18,14 +18,14 @@ public class FavoritesController {
     public void addToFavorites(String username, String refNumber) {
         AddToFavoritesInputData inputData = new AddToFavoritesInputData();
         inputData.username = username;
-        inputData.refNumber = refNumber;
+        inputData.refNumber = Integer.parseInt(refNumber);
         addToFavoritesInteractor.addMovieToFavorites(inputData);
     }
 
     public void removeFromFavorites(String username, String refNumber) {
         DeleteFromFavoritesInputData inputData = new DeleteFromFavoritesInputData();
         inputData.username = username;
-        inputData.refNumber = refNumber;
+        inputData.refNumber = Integer.parseInt(refNumber);
         deleteFavoritesListInteractor.deleteFromFavorites(inputData);
     }
 }
