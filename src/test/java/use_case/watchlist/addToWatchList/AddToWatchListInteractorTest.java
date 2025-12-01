@@ -11,14 +11,13 @@ class AddToWatchListInteractorTest {
     void successTest() {
         AddToWatchListInputData inputData = new AddToWatchListInputData();
         inputData.username = "testUser";
-        inputData.refNumber = "123";
+        inputData.refNumber = 123;
 
         AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
 
         AddToWatchListOutputBoundary successPresenter = new AddToWatchListOutputBoundary() {
             @Override
             public void presentSuccess(AddToWatchListOutputData outputData) {
-                // Check that output data is correct
                 assertEquals("testUser", outputData.getUsername());
                 assertEquals(123, outputData.getRefNumber());
                 assertEquals("Movie added successfully", outputData.getMessage());
@@ -38,37 +37,10 @@ class AddToWatchListInteractorTest {
     }
 
     @Test
-    void failureInvalidMovieIdTest() {
-        AddToWatchListInputData inputData = new AddToWatchListInputData();
-        inputData.username = "testUser";
-        inputData.refNumber = "notANumber";
-
-        AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
-
-        AddToWatchListOutputBoundary failurePresenter = new AddToWatchListOutputBoundary() {
-            @Override
-            public void presentSuccess(AddToWatchListOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void presentError(String error) {
-                assertTrue(error.contains("Invalid movie ID"));
-            }
-        };
-
-        AddToWatchListInputBoundaryData interactor = new AddToWatchListInteractor(
-                dataAccessObject, failurePresenter);
-        interactor.addMovieToWatchlist(inputData);
-
-        verify(dataAccessObject, never()).addMovieToWatchlist(anyString(), anyInt());
-    }
-
-    @Test
     void failureDataAccessExceptionTest() {
         AddToWatchListInputData inputData = new AddToWatchListInputData();
         inputData.username = "testUser";
-        inputData.refNumber = "456";
+        inputData.refNumber = 456;
 
         AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
 
@@ -98,7 +70,7 @@ class AddToWatchListInteractorTest {
     void successWithDifferentMovieIdTest() {
         AddToWatchListInputData inputData = new AddToWatchListInputData();
         inputData.username = "alice";
-        inputData.refNumber = "999";
+        inputData.refNumber = 999;
 
         AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
 
@@ -127,14 +99,13 @@ class AddToWatchListInteractorTest {
     void failureNegativeMovieIdTest() {
         AddToWatchListInputData inputData = new AddToWatchListInputData();
         inputData.username = "testUser";
-        inputData.refNumber = "-1";
+        inputData.refNumber = -1;
 
         AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
 
         AddToWatchListOutputBoundary successPresenter = new AddToWatchListOutputBoundary() {
             @Override
             public void presentSuccess(AddToWatchListOutputData outputData) {
-                // Negative ID is valid integer, so it should succeed parsing
                 assertEquals("testUser", outputData.getUsername());
                 assertEquals(-1, outputData.getRefNumber());
             }
@@ -150,33 +121,5 @@ class AddToWatchListInteractorTest {
         interactor.addMovieToWatchlist(inputData);
 
         verify(dataAccessObject, times(1)).addMovieToWatchlist("testUser", -1);
-    }
-
-    @Test
-    void failureEmptyMovieIdTest() {
-        AddToWatchListInputData inputData = new AddToWatchListInputData();
-        inputData.username = "testUser";
-        inputData.refNumber = "";
-
-
-        AddToWatchListDataAccessInterface dataAccessObject = mock(AddToWatchListDataAccessInterface.class);
-
-        AddToWatchListOutputBoundary failurePresenter = new AddToWatchListOutputBoundary() {
-            @Override
-            public void presentSuccess(AddToWatchListOutputData outputData) {
-                fail("Use case success is unexpected.");
-            }
-
-            @Override
-            public void presentError(String error) {
-                assertTrue(error.contains("Invalid movie ID"));
-            }
-        };
-
-        AddToWatchListInputBoundaryData interactor = new AddToWatchListInteractor(
-                dataAccessObject, failurePresenter);
-        interactor.addMovieToWatchlist(inputData);
-
-        verify(dataAccessObject, never()).addMovieToWatchlist(anyString(), anyInt());
     }
 }

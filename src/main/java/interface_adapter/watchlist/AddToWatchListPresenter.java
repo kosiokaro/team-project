@@ -19,7 +19,6 @@ public class AddToWatchListPresenter implements AddToWatchListOutputBoundary {
 
     @Override
     public void presentError(String error) {
-        System.err.println("Error adding to watchlist: " + error);
         final AddToWatchListState viewState = viewModel.getState();
         viewState.setWasAdded(false);
         viewModel.firePropertyChange();

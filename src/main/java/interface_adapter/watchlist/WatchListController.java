@@ -19,14 +19,14 @@ public class WatchListController {
     public void addToWatchList(String username, String refNumber) {
         AddToWatchListInputData inputData = new AddToWatchListInputData();
         inputData.username = username;
-        inputData.refNumber = refNumber;
+        inputData.refNumber = Integer.parseInt(refNumber);
         addToWatchListInteractor.addMovieToWatchlist(inputData);
     }
 
     public void removeFromWatchList(String username, String refNumber) {
         DeleteFromWatchListInputData inputData = new DeleteFromWatchListInputData();
         inputData.username = username;
-        inputData.refNumber = refNumber;
+        inputData.refNumber = Integer.parseInt(refNumber);
         deleteFromWatchListInteractor.deleteFromWatchlist(inputData);
     }
 }
