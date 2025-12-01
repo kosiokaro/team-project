@@ -283,7 +283,6 @@ public class AppBuilder {
         final BrowseInputBoundary browseInputBoundary = new BrowseInteractor(browseDataAccess,browsePresenter);
         BrowseController browseController = new BrowseController(browseInputBoundary);
         browseView.setBrowseController(browseController);
-        browseView.setBrowsePresenter(browsePresenter);
         return this;
     }
 
@@ -370,7 +369,8 @@ public class AppBuilder {
         // Set controller on watchlist view (for removing movies)
         watchlistView.setController(watchListController);
 
-        browsePresenter.setWatchListController(watchListController);
+        watchlistView.setController(watchListController);
+        browseView.setWatchListController(watchListController);
         return this;
     }
 

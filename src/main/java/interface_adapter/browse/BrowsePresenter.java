@@ -19,8 +19,7 @@ public class BrowsePresenter implements BrowseOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final ClickingViewModel clickingViewModel;
     private final ClickingController  clickingController;
-    private WatchListController watchListController;
-    private String currentUsername;
+
 
 
     public BrowsePresenter(BrowseViewModel browseViewModel, ViewManagerModel viewManagerModel,ClickingViewModel clickingViewModel, ClickingController clickingController) {
@@ -29,29 +28,6 @@ public class BrowsePresenter implements BrowseOutputBoundary {
         this.clickingViewModel = clickingViewModel;
         this.clickingController = clickingController;
     }
-
-    public void addToWatchList(int movieId) {
-        if (watchListController != null && currentUsername != null) {
-            watchListController.addToWatchList(currentUsername, String.valueOf(movieId));
-        }
-    }
-
-    public String getCurrentUsername() {
-        return currentUsername;
-    }
-
-    public WatchListController getWatchListController() {
-        return watchListController;
-    }
-
-    public void setWatchListController(WatchListController watchListController) {
-        this.watchListController = watchListController;
-    }
-
-    public void setCurrentUsername(String username) {
-        this.currentUsername = username;
-    }
-
 
     @Override
     public void populateView(BrowseOutputData browseOutputData) {

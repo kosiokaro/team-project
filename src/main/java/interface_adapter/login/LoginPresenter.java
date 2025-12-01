@@ -52,9 +52,6 @@ public class LoginPresenter implements LoginOutputBoundary {
             watchlistView.setCurrentUsername(response.getUsername());
         }
 
-        if (browsePresenter != null) {
-            browsePresenter.setCurrentUsername(response.getUsername());
-        }
         // and clear everything from the LoginViewModel's state
         loginViewModel.setState(new LoginState());
 

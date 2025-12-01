@@ -6,6 +6,7 @@ import interface_adapter.browse.BrowseState;
 import interface_adapter.browse.BrowseViewModel;
 import interface_adapter.watchlist.AddToWatchListState;
 import interface_adapter.watchlist.AddToWatchListViewModel;
+import interface_adapter.watchlist.WatchListController;
 import use_case.browse.BrowseOutputData;
 
 import javax.swing.*;
@@ -48,7 +49,9 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
     private final BrowseViewModel viewModel;
     private final AddToWatchListViewModel addToWatchListViewModel;
     private BrowseController browseController = null;
-    private BrowsePresenter browsePresenter = null;
+    private WatchListController watchListController = null;
+
+    private String currentUsername;
 
     public BrowseView(BrowseViewModel viewModel,  AddToWatchListViewModel addToWatchListViewModel) {
         this.viewModel = viewModel;
@@ -330,12 +333,10 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         addToWatchlistButton.addActionListener(e -> {
             int id = (int) card.getClientProperty("movieID");
             System.out.println("Adding to watchlist - movie ID: " + id);
-            System.out.println("BrowsePresenter: " + (browsePresenter != null ? "SET" : "NULL"));
-            System.out.println("Username: " + (browsePresenter != null ? browsePresenter.getCurrentUsername() : "N/A"));
-            if (browsePresenter != null) {
-                browsePresenter.addToWatchList(id);
+            if (watchListController != null && currentUsername != null) {
+                watchListController.addToWatchList(currentUsername, String.valueOf(id));  // ✅ Call controller
             } else {
-                System.err.println("ERROR: BrowsePresenter is NULL!");
+                System.err.println("ERROR: WatchListController is NULL or username is NULL!");
             }
         });
 
@@ -363,8 +364,12 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         this.browseController = browseController;
     }
 
-    public void setBrowsePresenter(BrowsePresenter browsePresenter) {
-        this.browsePresenter = browsePresenter;
+    public void setWatchListController(WatchListController controller) {
+        this.watchListController = controller;
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
