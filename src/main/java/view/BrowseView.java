@@ -55,8 +55,6 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
     private FavoritesController favoritesController = null;
     private String currentUsername;
 
-    private String currentUsername;
-
     public BrowseView(BrowseViewModel viewModel,  AddToWatchListViewModel addToWatchListViewModel) {
         this.viewModel = viewModel;
         this.addToWatchListViewModel = addToWatchListViewModel;
@@ -417,9 +415,7 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
         this.watchListController = controller;
     }
 
-    public void setCurrentUsername(String username) {
-        this.currentUsername = username;
-    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         final BrowseState browseState = viewModel.getState();
