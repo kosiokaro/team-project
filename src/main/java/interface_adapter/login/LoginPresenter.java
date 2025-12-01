@@ -1,10 +1,14 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.browse.BrowsePresenter;
 import interface_adapter.home.HomeState;
 import interface_adapter.home.HomeViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
+import view.BrowseView;
+import view.WatchlistView;
+import view.TestFavoritesView;
 
 /**
  * The Presenter for the Login Use Case.
@@ -14,12 +18,31 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final LoginViewModel loginViewModel;
     private final HomeViewModel homeViewModel;
     private final ViewManagerModel viewManagerModel;
+    private WatchlistView watchlistView;
+    private BrowseView browseView;
+    private BrowsePresenter browsePresenter;
+    private TestFavoritesView testFavoritesView;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
                           HomeViewModel homeViewModel, LoginViewModel loginViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.homeViewModel = homeViewModel;
         this.loginViewModel = loginViewModel;
+    }
+
+    public void setWatchlistView(WatchlistView watchlistView) {
+        this.watchlistView = watchlistView;
+    }
+
+    public void setBrowseView(BrowseView browseView) {
+        this.browseView = browseView;
+    }
+
+    public void setBrowsePresenter(BrowsePresenter presenter) {
+        this.browsePresenter = presenter;
+    }
+    public void setTestFavoritesView(TestFavoritesView testFavoritesView) {
+        this.testFavoritesView = testFavoritesView;
     }
 
     @Override
@@ -29,6 +52,17 @@ public class LoginPresenter implements LoginOutputBoundary {
         homeState.setUsername(response.getUsername());
         //System.out.println("login presenter username: " + response.getUsername());
         this.homeViewModel.firePropertyChange();
+
+        if (watchlistView != null) {
+            watchlistView.setCurrentUsername(response.getUsername());
+        }
+        if (testFavoritesView != null) {
+            testFavoritesView.setCurrentUsername(response.getUsername());
+        }
+
+        if (browseView != null) {  // ← ADD THIS
+            browseView.setCurrentUsername(response.getUsername());
+        }
 
         // and clear everything from the LoginViewModel's state
         loginViewModel.setState(new LoginState());

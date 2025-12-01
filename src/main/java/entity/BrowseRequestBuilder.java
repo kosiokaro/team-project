@@ -4,17 +4,14 @@ public class BrowseRequestBuilder {
 
     private final StringBuilder request;
 
-
     public BrowseRequestBuilder(){
         this.request = new StringBuilder();
         this.request.append("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US");
-        this.setPageNumber("1");
     }
 
     public BrowseRequestBuilder(String query){
         this.request = new StringBuilder();
         this.request.append("https://api.themoviedb.org/3/search/movie?query=").append(query).append("&include_adult=false&language=en-US");
-        this.setPageNumber("1");
     }
 
     public BrowseRequestBuilder(int MovieID){

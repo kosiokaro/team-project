@@ -11,7 +11,6 @@ public class Movie extends Media {
 
     public Movie(String title, int referenceNumber, String[] genreNames, String overview, double rating, String releaseDate, int runtime,String posterURL,String language) {
         super(title,referenceNumber, genreNames,posterURL,language);
-        this.genreIDs = genreIDs;
         this.overview = overview;
         this.rating = rating;
         this.releaseDate = releaseDate;
@@ -19,6 +18,31 @@ public class Movie extends Media {
 
     }
 
+    public String[] getGenres() {
+        return genreNames;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
+    @Override
     public String toString() {
         return "Movie{" +
                 "title='" + title + '\'' +

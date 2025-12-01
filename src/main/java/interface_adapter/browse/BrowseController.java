@@ -27,8 +27,7 @@ public class BrowseController {
     public void selectMovie(int movieRef)
     {
         BrowseInputData inputData = new BrowseInputData(movieRef);
-        this.browseUseCaseInteractor.execute(inputData);
-
+        this.browseUseCaseInteractor.selectMovie(inputData);
     }
 
     public void addFavorite(int movieRef)

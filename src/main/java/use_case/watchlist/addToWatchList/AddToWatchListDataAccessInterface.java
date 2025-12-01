@@ -1,4 +1,5 @@
 package use_case.watchlist.addToWatchList;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface AddToWatchListDataAccessInterface {
@@ -10,6 +11,6 @@ public interface AddToWatchListDataAccessInterface {
     void addMovieToWatchlist(String username, int refNumber);
 
 
-    List<Integer> getWatchlist(String username);
+    ArrayList<Integer> getWatchlist(String username);
 //    void updateWatchlist(String username, List<Integer> watchlist);
 }

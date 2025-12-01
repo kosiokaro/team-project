@@ -20,13 +20,13 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
 
 
     public BrowseDataAccess(){
-        this.API_KEY = null;
+        this.API_KEY = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM";
     }
 
     @Override
     public BrowsePage getPage(BrowseRequestBuilder browseRequestBuilder) {
         OkHttpClient client = new OkHttpClient();
-
+        System.out.println(browseRequestBuilder.getRequest());
         Request request = new Request.Builder()
                 .url(browseRequestBuilder.getRequest())
                 .get()
@@ -60,6 +60,7 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
 
     // Make a new request to retrieve the Movie runtimes and Genres
     public Request[] makeMovieIdRequests(JSONObject jsonObject) {
+
         JSONArray results = jsonObject.getJSONArray("results");
         Request[] idRequests = new Request[results.length()];
         for (int i = 0; i < results.length(); i++) {
