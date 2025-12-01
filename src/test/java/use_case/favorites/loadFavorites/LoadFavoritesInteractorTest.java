@@ -1,9 +1,8 @@
-package favorites;
+package use_case.favorites.loadFavorites;
 
 import entity.Movie;
 import org.junit.jupiter.api.Test;
 import use_case.favorites.addToFavorites.AddToFavoritesDataAccessInterface;
-import use_case.favorites.loadFavorites.*;
 
 import java.util.ArrayList;
 import static org.mockito.Mockito.*;
