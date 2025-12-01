@@ -179,7 +179,6 @@ public class ClickingInteractorTest {
 
         interactor.execute(inputData);
 
-
         ArgumentCaptor<ClickingOutputData> captor = ArgumentCaptor.forClass(ClickingOutputData.class);
         verify(mockPresenter).prepareSuccessView(captor.capture());
 
