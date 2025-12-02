@@ -3,6 +3,7 @@ package data_access;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import entity.MediaDetailsResponse;
+import io.github.cdimascio.dotenv.Dotenv;
 import use_case.clicking.ClickingDataAccessInterface;
 
 import java.io.BufferedReader;
@@ -14,12 +15,18 @@ import java.util.List;
 
 public class ClickingDataAccessTMDb implements ClickingDataAccessInterface {
 
-    private static final String API_KEY = "aaebf7ad961711073ad8cc634faaa700";
+    private static String API_KEY = "";
+
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
     private final Gson gson = new Gson();
 
     @Override
     public MediaDetailsResponse fetchDetailsById(int id) {
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .load();
+        this.API_KEY = dotenv.get("API_KEY2");
+
         try {
             String endpoint = "https://api.themoviedb.org/3/movie/" + id
                     + "?api_key=" + API_KEY + "&language=en-US";
