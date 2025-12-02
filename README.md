@@ -10,8 +10,10 @@ An app that allows for users to search and add movies and tv-shows to their watc
   Login/Logout:
   Add To Watchlist: Kosisochi Okaro
   Load Watchlist: Kosisochi Okaro
-  Add To Favorites:
-  View Favorites:
+  Add To Favorites: Keishi Suzuki
+  Delete From Favorites: Keishi Suzuki
+  Load Favorites: Keishi Suzuki
+  View Favorites: Keishi Suzuki
   Rate and Comment:
   Clicking View:
   Browse Movies:
@@ -19,7 +21,9 @@ An app that allows for users to search and add movies and tv-shows to their watc
 - information about the API(s) that your project uses:
   
 - screenshots or animations demonstrating current functionality:
-  
+
+Screenshot of the favorites view after adding a movie.  
+<img width="1776" height="1491" alt="スクリーンショット 2025-12-01 171554" src="https://github.com/user-attachments/assets/27894a6d-8c2b-4398-b44c-5c8b7b5fe0c2" />
 
 By keeping this README up-to-date,
 your team will find it easier to prepare for the final presentation
