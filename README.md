@@ -30,7 +30,7 @@ The readme should include information such as:
 
   Clicking View:
 
-  Browse Movies:
+  Browse Movies: Erik Dadashyan
  
  
 - information about the API(s) that your project uses:
