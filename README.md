@@ -17,10 +17,14 @@ The readme should include information such as:
   Add To Watchlist: Kosisochi Okaro
 
   Load Watchlist: Kosisochi Okaro
-
-  Add To Favorites:
   
-  View Favorites:
+  Add To Favorites: Keishi Suzuki
+  
+  Delete From Favorites: Keishi Suzuki
+  
+  Load Favorites: Keishi Suzuki
+  
+  View Favorites: Keishi Suzuki
   
   Rate and Comment: Yihe Xiao
 
@@ -32,6 +36,10 @@ The readme should include information such as:
 - information about the API(s) that your project uses:
   
 - screenshots or animations demonstrating current functionality:
+
+Screenshot of the favorites view after adding a movie.  
+<img width="1776" height="1491" alt="スクリーンショット 2025-12-01 171554" src="https://github.com/user-attachments/assets/27894a6d-8c2b-4398-b44c-5c8b7b5fe0c2" />
+
   
   - Rate and Comment:
 ![RateandComment.png](image/RateandComment.png)
