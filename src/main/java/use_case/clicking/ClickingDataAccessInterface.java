@@ -14,3 +14,4 @@ public interface ClickingDataAccessInterface {
      */
     MediaDetailsResponse fetchDetailsById(int id);
 }
+
