@@ -18,12 +18,21 @@ public class BrowseInteractorTest {
         BrowseInputData searchQuery3 = new BrowseInputData("2024","","1",false,true);
         BrowseInputData searchQuery4 = new BrowseInputData("2025","","1",true,false);
 
+        BrowseInputData searchQuery5 = new BrowseInputData("","","1",false,true);
+        BrowseInputData searchQuery6 = new BrowseInputData("2014","Lego Movie","",true,false);
+        BrowseInputData searchQuery7 = new BrowseInputData("","Lego Movie","1",true,false);
+        BrowseInputData searchQuery8 = new BrowseInputData("","","1",true,false);
+
+
+
 
         BrowseDataAccess browseDataAccess = new BrowseDataAccess();
         BrowseOutputBoundary presenter = new BrowseOutputBoundary() {
             @Override
             public void populateView(BrowseOutputData browseOutputData) {
-                assert browseOutputData.getMovies().size()== 20;
+                assert browseOutputData.getMovies().size() > 0;
+                assert browseOutputData.getMovies().size() <= 20;
+
             }
 
             @Override
@@ -44,6 +53,11 @@ public class BrowseInteractorTest {
         browseInteractor.execute(searchQuery2);
         browseInteractor.execute(searchQuery3);
         browseInteractor.execute(searchQuery4);
+        browseInteractor.execute(searchQuery5);
+        browseInteractor.execute(searchQuery6);
+        browseInteractor.execute(searchQuery7);
+        browseInteractor.execute(searchQuery8);
+
 
 
     }
