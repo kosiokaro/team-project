@@ -12,7 +12,7 @@ The readme should include information such as:
 
   Sign Up: Yihe Xiao
   
-  Login/Logout: Yihe Xiao
+  Login/Logout: Yihe Xiao, Shimeng Wang
 
   Add To Watchlist: Kosisochi Okaro
 
@@ -26,16 +26,21 @@ The readme should include information such as:
   
   View Favorites: Keishi Suzuki
   
+  Clicking View: Shimeng Wang
+  
   Rate and Comment: Yihe Xiao
-
-  Clicking View:
 
   Browse Movies: Erik Dadashyan
  
  
 - information about the API(s) that your project uses:
-
+  We use API:TheMovieDb (https://developer.themoviedb.org/reference/account-watchlisttv)
+  
 - screenshots or animations demonstrating current functionality:
+  Clicking:
+- ![img.png](img.png)
+
+
   <img width="1207" height="773" alt="Screenshot 2025-12-01 at 8 54 46 PM" src="https://github.com/user-attachments/assets/8af2308a-a53b-4bdd-ac5a-2d5b76945fac" />
   
 
@@ -46,6 +51,4 @@ Screenshot of the favorites view after adding a movie.
   - Rate and Comment:
 ![RateandComment.png](image/RateandComment.png)
 ![successSubmitView.png](image/successSubmitView.png)
-By keeping this README up-to-date,
-your team will find it easier to prepare for the final presentation
-at the end of the term.
+
