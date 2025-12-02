@@ -4,18 +4,22 @@ package entity;
 public class BrowsePage {
     private Movie[] movies;
     private final int pageNumber;
-    public final Exception error;
+    private String error;
 
     public BrowsePage(Movie[] movies,int pageNumber) {
         this.pageNumber = pageNumber;
         this.movies = movies;
-        this.error = null;
+        this.error = "";
     }
 
-    public BrowsePage(Movie[] movies,Exception e){
+    public BrowsePage(Movie[] movies,String error){
         this.movies = movies;
-        this.error = e;
+        this.error = error;
         this.pageNumber = 1;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     public Movie[] getMovies() {
@@ -23,4 +27,6 @@ public class BrowsePage {
     }
 
     public int getPageNumber() {return pageNumber;}
+
+    public String getError() {return error;}
 }

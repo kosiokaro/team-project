@@ -38,8 +38,18 @@ public class BrowseInteractor implements BrowseInputBoundary {
         }
 
         BrowsePage outputPage = this.browseDataAccessObject.getPage(builder);
-        BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
-        this.browsePresenter.populateView(browseOutputData);
+        if (outputPage.getMovies().length == 0 || outputPage.getMovies() == null) {
+            System.out.println("Error: " + outputPage.getError());
+            BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
+            browseOutputData.setErrorMessage(outputPage.getError());
+            this.browsePresenter.prepareError(browseOutputData);
+        }
+        else{
+            BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
+            this.browsePresenter.populateView(browseOutputData);
+        }
+
+
 
 
     }

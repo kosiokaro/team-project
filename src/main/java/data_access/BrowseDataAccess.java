@@ -37,25 +37,31 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
             final Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 final JSONObject responseBody = new JSONObject(response.body().string());
-
-                List<JSONObject> missingDataResponses = new ArrayList<>();
-                Request[] requests = makeMovieIdRequests(responseBody);
-                for(Request req: requests){
-                    Response resp = client.newCall(req).execute();
-                    if(resp.isSuccessful()){
-                        JSONObject body = new JSONObject(resp.body().string());
-                        missingDataResponses.add(body);
+                if(!responseBody.getJSONArray("results").isEmpty()){
+                    List<JSONObject> missingDataResponses = new ArrayList<>();
+                    Request[] requests = makeMovieIdRequests(responseBody);
+                    for(Request req: requests){
+                        Response resp = client.newCall(req).execute();
+                        if(resp.isSuccessful()){
+                            JSONObject body = new JSONObject(resp.body().string());
+                            missingDataResponses.add(body);
+                        }
+                        Thread.sleep(50);
                     }
-                    Thread.sleep(50);
+                    BrowsePage outputpage =  makeBrowsePage(responseBody,missingDataResponses);
+                    if(outputpage.getMovies().length > 0||outputpage.getMovies() != null){
+                        return outputpage;
+                    }
                 }
-                return makeBrowsePage(responseBody,missingDataResponses);
             }
         } catch (Exception e) {
             Movie[] movies = {};
-            return new BrowsePage(movies,e);
+            StringBuilder error = new StringBuilder();
+            error.append("Request Failed for query: ").append(request.toString()).append("\n").append("Due to following error").append(e.getMessage());
+            return new BrowsePage(movies,error.toString());
         }
-        return null;
-
+        Movie[] movies = {};
+        return new BrowsePage(movies,"Page is Empty");
     }
 
     // Make a new request to retrieve the Movie runtimes and Genres
