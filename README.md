@@ -17,8 +17,9 @@ An app that allows for users to search and add movies and tv-shows to their watc
   Browse Movies:
   
 - information about the API(s) that your project uses:
-  
+
 - screenshots or animations demonstrating current functionality:
+  <img width="1207" height="773" alt="Screenshot 2025-12-01 at 8 54 46 PM" src="https://github.com/user-attachments/assets/8af2308a-a53b-4bdd-ac5a-2d5b76945fac" />
   
 
 By keeping this README up-to-date,
