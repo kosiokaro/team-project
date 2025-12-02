@@ -10,9 +10,6 @@ public class BrowseInputData {
     public boolean sortAscending;
     public boolean sortDescending;
     public int referenceNumber;
-    public boolean isQuery = false;
-    public boolean isReferenceLookUp = false;
-
 
     public BrowseInputData(String year, String title, String pageNumber, boolean sortAscending, boolean sortDescending) {
 
@@ -21,14 +18,10 @@ public class BrowseInputData {
         this.pageNumber = pageNumber;
         this.sortAscending = sortAscending;
         this.sortDescending = sortDescending;
-        this.isQuery = true;
-        this.isReferenceLookUp = false;
     }
 
     public BrowseInputData(int referenceNumber1) {
         this.referenceNumber = referenceNumber1;
-        this.isQuery = false;
-        this.isReferenceLookUp = true;
     }
 
 
