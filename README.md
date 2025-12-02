@@ -3,8 +3,8 @@
 Please keep this up-to-date with information about your project throughout the term.
 Names: Kosi, Erik, Keishi, Simone, Eileen
 The readme should include information such as:
-- Summary
-  An app that allows for users to search and add movies and tv-shows to their watchlist. This allows users to keep note of what they would like to watch in the future. Movie data will be supplied via an external API. Users can also mark movies as their favorite and search through both tv and movie titles by genre, release date, rating, and several more.
+- Summary:
+An app that allows for users to search and add movies and tv-shows to their watchlist. This allows users to keep note of what they would like to watch in the future. Movie data will be supplied via an external API. Users can also mark movies as their favorite and search through both tv and movie titles by genre, release date, rating, and several more.
   
 - a list of the user stories, along with who is responsible for each one
   Sign Up:
