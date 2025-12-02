@@ -34,9 +34,8 @@ The readme should include information such as:
 - screenshots or animations demonstrating current functionality:
   
   - Rate and Comment:
-  ![](D:\CSC207\team-project\image\successSubmitView.png)
-  - 
-
+![RateandComment.png](image/RateandComment.png)
+![successSubmitView.png](image/successSubmitView.png)
 By keeping this README up-to-date,
 your team will find it easier to prepare for the final presentation
 at the end of the term.
