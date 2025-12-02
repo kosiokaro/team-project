@@ -12,7 +12,7 @@ The readme should include information such as:
 
   Sign Up: Yihe Xiao
   
-  Login/Logout: Yihe Xiao
+  Login/Logout: Yihe Xiao, Shimeng Wang
 
   Add To Watchlist: Kosisochi Okaro
 
@@ -30,7 +30,7 @@ The readme should include information such as:
   
   Rate and Comment: Yihe Xiao
 
-  Browse Movies:
+  Browse Movies: Erik Dadashyan
  
  
 - information about the API(s) that your project uses:
@@ -51,6 +51,4 @@ Screenshot of the favorites view after adding a movie.
   - Rate and Comment:
 ![RateandComment.png](image/RateandComment.png)
 ![successSubmitView.png](image/successSubmitView.png)
-By keeping this README up-to-date,
-your team will find it easier to prepare for the final presentation
-at the end of the term.
+
