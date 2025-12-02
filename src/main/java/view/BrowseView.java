@@ -398,9 +398,20 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("populating page");
+        System.out.println("populating page from view");
         final BrowseState browseState = (BrowseState) evt.getNewValue();
+        if(!browseState.getErrorMessage().isEmpty()) {
+            showError(browseState.getErrorMessage());
+
+        }
         populatePage(browseState);
+
+
+
+    }
+
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(gridPanel, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public void populatePage(BrowseState state) {
@@ -427,6 +438,7 @@ public class BrowseView extends JPanel implements PropertyChangeListener, Action
             } else if (e.getSource() == browseButton) {
                 browseState.resetCurrentPage();
                 ClearPage();
+                browseState.setError("");
             }
             browseController.executeQuery(
                     browseState.getSearchState().getYear(),

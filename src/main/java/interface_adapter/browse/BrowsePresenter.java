@@ -38,7 +38,13 @@ public class BrowsePresenter implements BrowseOutputBoundary {
 
     @Override
     public void prepareError(BrowseOutputData browseOutputData) {
-        //TODO IMPLEMENT
+        System.out.println("Reached Error");
+        final BrowseState browseState = browseViewModel.getState();
+        browseState.setMovies(browseOutputData.getMovies());
+        System.out.println(browseOutputData.getErrorMessage());
+        browseState.setError(browseOutputData.getErrorMessage());
+        this.browseViewModel.firePropertyChange();
+
     }
 
     @Override

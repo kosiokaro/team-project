@@ -10,6 +10,7 @@ public class BrowseState {
     private int currentPageNumber;
     private List<List<BrowseOutputData.MovieCardData>> movieCards;
     private SearchTabState searchState;
+    private String errorMessage;
 
     public class SearchTabState{
         private String query;
@@ -51,7 +52,7 @@ public class BrowseState {
         this.searchState = new SearchTabState();
         movieCards = new ArrayList<>();
         this.currentPageNumber = 1;
-
+        this.errorMessage = "";
     }
 
     public SearchTabState getSearchState() {
@@ -65,6 +66,12 @@ public class BrowseState {
     public void setMovies(List<BrowseOutputData.MovieCardData> m) {
         movieCards.add(m);
     }
+
+    public void setError(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorMessage() {return errorMessage;}
 
     public void resetCurrentPage(){
         this.currentPageNumber = 1;
