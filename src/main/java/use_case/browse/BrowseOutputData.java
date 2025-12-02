@@ -11,20 +11,23 @@ public class BrowseOutputData {
 
     private final List<MovieCardData> movies = new ArrayList<>();
     private int pageNumber;
+    private String errorMessage;
 
 
     public BrowseOutputData(BrowsePage browsePage) {
-        for (Movie movie : browsePage.getMovies()) {
-            movies.add(new MovieCardData(
-                    movie.title,
-                    movie.rating,
-                    movie.runtime,
-                    Arrays.toString(movie.genreNames),
-                    movie.posterUrl,
-                    movie.getReferenceNumber()
-            ));
-        }
-        pageNumber = browsePage.getPageNumber();
+            for (Movie movie : browsePage.getMovies()) {
+                movies.add(new MovieCardData(
+                        movie.title,
+                        movie.rating,
+                        movie.runtime,
+                        Arrays.toString(movie.genreNames),
+                        movie.posterUrl,
+                        movie.getReferenceNumber()
+                ));
+            }
+            pageNumber = browsePage.getPageNumber();
+            this.errorMessage = null;
+
     }
 
     public BrowseOutputData(int referenceNumber) {
@@ -52,6 +55,12 @@ public class BrowseOutputData {
        public int getMovieID() {
             return movieID;
        }
+    }
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public List<MovieCardData> getMovies() {

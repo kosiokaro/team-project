@@ -2,6 +2,7 @@ package data_access;
 
 import entity.Movie;
 import entity.BrowseRequestBuilder;
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -24,7 +25,10 @@ public class FavoritesMovieDataAccess implements
     private final String favoritesFilePath = "favorites.json";
 
     public FavoritesMovieDataAccess() {
-        this.API_KEY = null;
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .load();
+        this.API_KEY = dotenv.get("API_KEY");
         this.userFavorites = new HashMap<>();
         loadFavoritesFromFile();
     }

@@ -2,6 +2,7 @@ package data_access;
 
 import entity.Movie;
 import entity.BrowseRequestBuilder;
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -13,7 +14,10 @@ public class WatchlistMovieDataAccess implements LoadWatchListDataAccessInterfac
     private final String API_KEY;
 
     public WatchlistMovieDataAccess(String apiKey) {
-        this.API_KEY = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM";
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .load();
+        this.API_KEY = dotenv.get("API_KEY");
     }
 
     @Override

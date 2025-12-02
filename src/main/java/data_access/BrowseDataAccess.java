@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import entity.BrowsePage;
 import entity.BrowseRequestBuilder;
 import entity.Movie;
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,7 +20,10 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
     private final String API_KEY;
 
     public BrowseDataAccess(){
-        this.API_KEY = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzJmZGIzYmQ2OWNmNmFmZDRhYmI5NzZiNTdjMWIxYSIsIm5iZiI6MTc2MTkxODY4MC4xMzMsInN1YiI6IjY5MDRiZWQ4MzU3M2VmMTQ4MDQ2MzY5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GQkgkyQZ6-GvLMOJqIOu0jfwYXjuHjrdNDBBbuzswsM";
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing()
+                .load();
+        this.API_KEY = dotenv.get("API_KEY");
     }
 
     @Override
@@ -37,25 +41,31 @@ public class BrowseDataAccess implements use_case.browse.BrowseDataAccess {
             final Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 final JSONObject responseBody = new JSONObject(response.body().string());
-
-                List<JSONObject> missingDataResponses = new ArrayList<>();
-                Request[] requests = makeMovieIdRequests(responseBody);
-                for(Request req: requests){
-                    Response resp = client.newCall(req).execute();
-                    if(resp.isSuccessful()){
-                        JSONObject body = new JSONObject(resp.body().string());
-                        missingDataResponses.add(body);
+                if(!responseBody.getJSONArray("results").isEmpty()){
+                    List<JSONObject> missingDataResponses = new ArrayList<>();
+                    Request[] requests = makeMovieIdRequests(responseBody);
+                    for(Request req: requests){
+                        Response resp = client.newCall(req).execute();
+                        if(resp.isSuccessful()){
+                            JSONObject body = new JSONObject(resp.body().string());
+                            missingDataResponses.add(body);
+                        }
+                        Thread.sleep(50);
                     }
-                    Thread.sleep(50);
+                    BrowsePage outputpage =  makeBrowsePage(responseBody,missingDataResponses);
+                    if(outputpage.getMovies().length > 0||outputpage.getMovies() != null){
+                        return outputpage;
+                    }
                 }
-                return makeBrowsePage(responseBody,missingDataResponses);
             }
         } catch (Exception e) {
             Movie[] movies = {};
-            return new BrowsePage(movies,e);
+            StringBuilder error = new StringBuilder();
+            error.append("Request Failed for query: ").append(request.toString()).append("\n").append("Due to following error").append(e.getMessage());
+            return new BrowsePage(movies,error.toString());
         }
-        return null;
-
+        Movie[] movies = {};
+        return new BrowsePage(movies,"Page is Empty");
     }
 
     // Make a new request to retrieve the Movie runtimes and Genres

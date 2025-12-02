@@ -17,29 +17,38 @@ public class BrowseInteractor implements BrowseInputBoundary {
     @Override
     public void execute(BrowseInputData browseInputData) {
         BrowseRequestBuilder builder = new BrowseRequestBuilder();
-        if(browseInputData.isQuery){
-            if(browseInputData.title.isEmpty()){
-                if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
-                if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
+        if(browseInputData.title.isEmpty()){
+            if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
+            if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
 
-                if(browseInputData.sortAscending){builder.sortByRatingAsc();
-                    System.out.println("Sort by Ascending");}
-                if(browseInputData.sortDescending){builder.sortByRatingDesc();}
-                builder.addMinimumRating();
+            if(browseInputData.sortAscending){builder.sortByRatingAsc();
+                System.out.println("Sort by Ascending");}
+            if(browseInputData.sortDescending){builder.sortByRatingDesc();}
+            builder.addMinimumRating();
 
-            } else {
-                builder = new BrowseRequestBuilder(browseInputData.title);
-                if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
-                if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
+        } else {
+            builder = new BrowseRequestBuilder(browseInputData.title);
+            if(!browseInputData.year.isEmpty()){builder.setReleaseYear(browseInputData.year);}
+            if (!browseInputData.pageNumber.isEmpty()){builder.setPageNumber(browseInputData.pageNumber);}
 
-                if(browseInputData.sortAscending){builder.sortByRatingAsc();}
-                if(browseInputData.sortDescending){builder.sortByRatingDesc();}
-            }
+            if(browseInputData.sortAscending){builder.sortByRatingAsc();}
+            if(browseInputData.sortDescending){builder.sortByRatingDesc();}
         }
 
+
         BrowsePage outputPage = this.browseDataAccessObject.getPage(builder);
-        BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
-        this.browsePresenter.populateView(browseOutputData);
+        if (outputPage.getMovies().length == 0) {
+            System.out.println("Error: " + outputPage.getError());
+            BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
+            browseOutputData.setErrorMessage(outputPage.getError());
+            this.browsePresenter.prepareError(browseOutputData);
+        }
+        else{
+            BrowseOutputData browseOutputData = new BrowseOutputData(outputPage);
+            this.browsePresenter.populateView(browseOutputData);
+        }
+
+
 
 
     }

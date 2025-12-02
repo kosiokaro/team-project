@@ -6,6 +6,7 @@
     <suppressErrors>true</suppressErrors>
     <option name="thirdPartyClasspath" />
     <option name="activeLocationIds">
+      <option value="99822bbf-0137-4f64-9ca6-3bd706b5c884" />
       <option value="bundled-google-checks" />
       <option value="bundled-sun-checks" />
       <option value="fa825166-f1e1-4274-81f8-88cbe3307bda" />
@@ -13,6 +14,8 @@
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="99822bbf-0137-4f64-9ca6-3bd706b5c884" type="LOCAL_FILE" scope="All" description="csc207">$PROJECT_DIR$/../M4-refactoring/mystyle.xml</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">
           (bundled)
           <option name="properties">

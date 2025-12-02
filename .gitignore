@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Environment variables
+.env
+*.env
+
+# keep example file
+!.env.example
