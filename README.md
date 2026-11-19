@@ -30,7 +30,7 @@ The readme should include information such as:
   
   Rate and Comment: Yihe Xiao
 
-  Browse Movies: Erik Dadashyan
+  Browse Movies: Erik
  
  
 - information about the API(s) that your project uses:
